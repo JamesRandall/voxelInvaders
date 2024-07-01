@@ -1,0 +1,41 @@
+import { ResourceSpecification } from "./models/ResourceSpecification"
+import { Scene } from "./scene"
+import { Resources } from "./resources"
+
+require("../extensions.ts")
+
+export async function mount(resourceSpecification: ResourceSpecification, initialSceneFactory:(gl:WebGL2RenderingContext,resources:Resources)=>Scene) {
+  const viewCanvas = document.getElementById("canvas") as HTMLCanvasElement
+
+  function setSize() {
+    viewCanvas.width = viewCanvas.clientWidth
+    viewCanvas.height = viewCanvas.clientHeight
+  }
+
+  const gl = viewCanvas.getContext("webgl2", { antialias: true })
+  if (gl === null) {
+    console.error("Your browser doesn't support WebGL 2")
+    return
+  }
+
+  const resources = await Resources.load(resourceSpecification)
+  setSize()
+  let scene = initialSceneFactory(gl, resources)
+
+  let resizeDebounce: ReturnType<typeof setTimeout> | undefined = undefined
+  window.addEventListener("resize", (ev) => {
+    clearTimeout(resizeDebounce)
+    resizeDebounce = setTimeout(() => {
+      setSize()
+      scene.resize()
+    }, 100)
+  })
+
+  function render(now: number) {
+    scene = scene.update(now) ?? scene
+    requestAnimationFrame(render)
+  }
+  requestAnimationFrame(render)
+}
+
+
