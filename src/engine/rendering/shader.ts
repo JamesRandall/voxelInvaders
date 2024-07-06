@@ -17,6 +17,7 @@ export function loadShader(gl: WebGL2RenderingContext, type: number, source: str
   return shader
 }
 
+/*
 let shaderMap = new Map<string, WebGLProgram>()
 export function compileShaderProgram(gl: WebGL2RenderingContext, vsSource: string, fsSource: string) {
   const key = `${vsSource}:${fsSource}`
@@ -37,9 +38,9 @@ export function compileShaderProgram(gl: WebGL2RenderingContext, vsSource: strin
     shaderMap.set(key, shaderProgram)
   }
   return shaderProgram
-}
+}*/
 
-export function compileShaderProgram2(gl: WebGL2RenderingContext, source: ShaderSource) {
+export function compileShaderProgram(gl: WebGL2RenderingContext, source: ShaderSource) {
   const vertexShader = loadShader(gl, gl.VERTEX_SHADER, source.vert)!
   const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, source.frag)!
 
@@ -49,7 +50,7 @@ export function compileShaderProgram2(gl: WebGL2RenderingContext, source: Shader
   gl.linkProgram(shaderProgram)
 
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    alert(`Unable to initialize the shader program: ${gl.getProgramInfoLog(shaderProgram)}`)
+    console.log(`Unable to initialize the shader program: ${gl.getProgramInfoLog(shaderProgram)}`)
     return null
   }
   return shaderProgram

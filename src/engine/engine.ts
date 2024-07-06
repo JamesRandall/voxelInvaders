@@ -1,10 +1,11 @@
 import { ResourceSpecification } from "./models/ResourceSpecification"
 import { Scene } from "./scene"
-import { Resources } from "./resources"
+import { Resources } from "./Resources"
+import { VoxelRenderer } from "./rendering/VoxelRenderer"
 
 require("../extensions.ts")
 
-export async function mount(resourceSpecification: ResourceSpecification, initialSceneFactory:(gl:WebGL2RenderingContext,resources:Resources)=>Scene) {
+export async function mount<TModelType>(resourceSpecification: ResourceSpecification<TModelType>, initialSceneFactory:(gl:WebGL2RenderingContext,resources:Resources<TModelType>)=>Scene) {
   const viewCanvas = document.getElementById("canvas") as HTMLCanvasElement
 
   function setSize() {
@@ -18,21 +19,23 @@ export async function mount(resourceSpecification: ResourceSpecification, initia
     return
   }
 
-  const resources = await Resources.load(resourceSpecification)
+  const resources : Resources<TModelType> = await Resources.load(gl, resourceSpecification)
   setSize()
   let scene = initialSceneFactory(gl, resources)
 
   let resizeDebounce: ReturnType<typeof setTimeout> | undefined = undefined
-  window.addEventListener("resize", (ev) => {
+  window.addEventListener("resize", () => {
     clearTimeout(resizeDebounce)
     resizeDebounce = setTimeout(() => {
       setSize()
       scene.resize()
     }, 100)
   })
+  const renderer = new VoxelRenderer(gl, resources, resources)
 
   function render(now: number) {
     scene = scene.update(now) ?? scene
+    renderer.render(gl!, scene)
     requestAnimationFrame(render)
   }
   requestAnimationFrame(render)

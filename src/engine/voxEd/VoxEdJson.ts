@@ -18,9 +18,9 @@ export namespace VoxEdJson {
     model.voxels.reduce((pv, cv) =>
         [Math.max(pv[0], cv.position[0]), Math.max(pv[1], cv.position[1]), Math.max(pv[2], cv.position[2])],
       [-1, -1, -1]
-    )
+    ).map(v => v+1)
 
-  export const createFromVoxEd = (model: Model) => {
+  export function createFromVoxEd<TModelType>(type: TModelType, model: Model) {
     const [width, height, depth] = size(model)
 
     let voxels: (EngineVoxel | null)[][][] = Array.from({ length: depth }, () =>
@@ -30,11 +30,11 @@ export namespace VoxEdJson {
     )
 
     model.voxels.forEach(jsonVoxel =>
-      voxels[jsonVoxel.position[0]][jsonVoxel.position[1]][jsonVoxel.position[2]] =
+      voxels[jsonVoxel.position[2]][jsonVoxel.position[1]][jsonVoxel.position[0]] =
         new EngineVoxel(new VoxelColor(jsonVoxel.color[0], jsonVoxel.color[1], jsonVoxel.color[2], jsonVoxel.color[3]))
     )
 
-    return new VoxelModel(width, height, depth, voxels)
+    return new VoxelModel(type, width, height, depth, voxels)
   }
 }
 

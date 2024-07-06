@@ -1,9 +1,14 @@
 import { Scene } from "../engine/scene"
-import { Resources } from "../engine/resources"
+import { Resources } from "../engine/Resources"
+import { ModelType } from "./startup"
 
-export class GameScene implements Scene {
-  static create(gl:WebGL2RenderingContext, resources:Resources) {
-    return new GameScene()
+export class GameScene extends Scene {
+
+
+  static create(gl:WebGL2RenderingContext, resources:Resources<ModelType>) {
+    const scene = new GameScene()
+    scene.sprites.push()
+    return scene
   }
 
   resize() {

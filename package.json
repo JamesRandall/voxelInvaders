@@ -1,12 +1,11 @@
 {
-  "name": "empire-of-asphalt",
+  "name": "voxel-invaders",
   "version": "1.0.0",
   "description": "",
   "scripts": {
     "start": "parcel",
     "build": "parcel build --public-url ./",
-    "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
-    "process-models": "npx tsc ./tools/processVoxelModels.ts && node ./tools/processVoxelModels.js"
+    "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
   "private": true,
   "source": "src/index.html",
