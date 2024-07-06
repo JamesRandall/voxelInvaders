@@ -1,11 +1,11 @@
 import { VoxelSprite } from "./models/VoxelSprite"
 import { Camera } from "./Camera"
 
-export class Scene {
-  public sprites : VoxelSprite[] = []
+export class Scene<TModelType> {
+  public sprites : VoxelSprite<TModelType>[] = []
   public view = {
     camera: Camera.default(),
-    zFar: 100.0
+    zFar: 200.0
   }
 
   private _previousTime : number|null = null
@@ -14,7 +14,7 @@ export class Scene {
 
   }
 
-  public update(now: number) : Scene | null {
+  public update(now: number) : Scene<TModelType> | null {
     // This prevents a big stutter on the first frame
     if (this._previousTime === null) {
       this._previousTime = now

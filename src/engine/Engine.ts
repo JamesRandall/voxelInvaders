@@ -1,11 +1,11 @@
 import { ResourceSpecification } from "./models/ResourceSpecification"
-import { Scene } from "./scene"
+import { Scene } from "./Scene"
 import { Resources } from "./Resources"
 import { VoxelRenderer } from "./rendering/VoxelRenderer"
 
 require("../extensions.ts")
 
-export async function mount<TModelType>(resourceSpecification: ResourceSpecification<TModelType>, initialSceneFactory:(gl:WebGL2RenderingContext,resources:Resources<TModelType>)=>Scene) {
+export async function mount<TModelType>(resourceSpecification: ResourceSpecification<TModelType>, initialSceneFactory:(gl:WebGL2RenderingContext,resources:Resources<TModelType>)=>Scene<TModelType>) {
   const viewCanvas = document.getElementById("canvas") as HTMLCanvasElement
 
   function setSize() {

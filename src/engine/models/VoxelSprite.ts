@@ -7,8 +7,8 @@ export interface SpriteOptions {
   unitBasedMovement?: boolean // if set to true then the sprite will move on the voxel grid
 }
 
-export class VoxelSprite {
-  private readonly _frames:VoxelModel[]
+export class VoxelSprite<TModelType> {
+  private readonly _frames:VoxelModel<TModelType>[]
   private readonly _animationFrameDuration:number|null
   private readonly _unitBasedMovement:boolean
   private _position:vec3
@@ -19,7 +19,7 @@ export class VoxelSprite {
   public velocity = vec3.fromValues(0,0,0)
 
 
-  constructor(frames:VoxelModel[], position: vec3, options?:SpriteOptions) {
+  constructor(frames:VoxelModel<TModelType>[], position: vec3, options?:SpriteOptions) {
     // If a sprite is destructible then we want to copy the models as they will be modified
     // in response to destruction
     this._frames = (options?.isDestructible ?? false) ? frames.map(VoxelModel.copy) : frames

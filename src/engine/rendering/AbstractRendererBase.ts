@@ -8,8 +8,10 @@ export abstract class AbstractRendererBase {
     type: GLenum,
     numberOfComponents:number
   ) {
+    if (position < 0) { return }
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
     gl.vertexAttribPointer(position, numberOfComponents, type, false, 0, 0)
+    gl.enableVertexAttribArray(position)
   }
 
   protected setVertexAttribute(

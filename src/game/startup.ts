@@ -1,4 +1,4 @@
-import { mount } from "../engine/engine"
+import { mount } from "../engine/Engine"
 import { GameScene } from "./GameScene"
 
 export enum ModelType {
@@ -9,7 +9,7 @@ export enum ModelType {
 
 (async () => await mount({
   voxelModels: [
-    { type: ModelType.InvaderFrame1, source: "invader1" },
+    //{ type: ModelType.InvaderFrame1, source: "invader1" },
     { type: ModelType.Player, source: "player" }
   ]
 }, GameScene.create))()

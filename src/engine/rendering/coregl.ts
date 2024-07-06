@@ -33,7 +33,7 @@ export function createFrameBufferTexture(gl: WebGL2RenderingContext, width: numb
 export function createProjectionMatrix(width: number, height: number, zFar: number) {
   const fieldOfView = (45 * Math.PI) / 180 // in radians
   const aspect = width / height
-  const zNear = 0.1
+  const zNear = 0.01
   const projectionMatrix = mat4.create()
 
   // note: glmatrix.js always has the first argument
@@ -44,7 +44,8 @@ export function createProjectionMatrix(width: number, height: number, zFar: numb
 
 export function createProjectionViewMatrix(width: number, height: number, zFar: number, cameraPosition: vec3, lookAt: vec3) {
   const projectionMatrix = createProjectionMatrix(width, height, zFar)
-  const viewMatrix = mat4.lookAt(mat4.create(), cameraPosition, lookAt, [0, 1, 0])
+  const viewMatrix = mat4.create()
+  mat4.lookAt(viewMatrix, cameraPosition, lookAt, [0, 1, 0])
   return mat4.multiply(mat4.create(), projectionMatrix, viewMatrix)
 }
 

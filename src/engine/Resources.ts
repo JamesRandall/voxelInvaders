@@ -33,6 +33,10 @@ export class Resources<TModelType> implements ShaderProvider, RenderingModelProv
     return this.renderingModels.get(type) ?? null
   }
 
+  public getModel(type:TModelType) {
+    return this.voxelModels.get(type) ?? null
+  }
+
   static async load<TModelType>(gl: WebGL2RenderingContext, specification:ResourceSpecification<TModelType>) {
     const shaderNames = [
       "voxel"
