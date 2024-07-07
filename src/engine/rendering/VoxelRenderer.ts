@@ -40,7 +40,7 @@ export class VoxelRenderer<TModelType> extends AbstractRendererBase {
   render(gl: WebGL2RenderingContext, scene:Scene<TModelType>) {
     const width = gl.canvas.width
     const height = gl.canvas.height
-    const projectionViewMatrix = createProjectionViewMatrix(width, height, scene.view.zFar, scene.view.camera.position, scene.view.camera.lookAt)
+    const projectionViewMatrix = createProjectionViewMatrix(width, height, scene.view.zFar, scene.view.camera.position, scene.view.camera.lookAt, scene.view.zNear)
     setupGl(gl)
 
     // this prevents small lines appearing between the voxels
@@ -58,7 +58,9 @@ export class VoxelRenderer<TModelType> extends AbstractRendererBase {
       //const adjustedPosition = vec3.add(vec3.create(), [0.002,0.002,0.002], sprite.position)
       const adjustedPosition = sprite.position
       const translateMatrix = mat4.translate(mat4.create(), mat4.create(), adjustedPosition)
-      gl.uniformMatrix4fv(this._programInfo.uniforms.transformMatrix, false, translateMatrix)
+      const rotateMatrix = mat4.rotateY(mat4.create(), mat4.create(), 0.2)
+      const worldMatrix = mat4.multiply(mat4.create(), rotateMatrix, translateMatrix)
+      gl.uniformMatrix4fv(this._programInfo.uniforms.transformMatrix, false, worldMatrix)
       this.setAttributes(gl, renderingModel)
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, renderingModel.indices)
       gl.drawElements(gl.TRIANGLES, renderingModel.vertexCount, gl.UNSIGNED_SHORT, 0)

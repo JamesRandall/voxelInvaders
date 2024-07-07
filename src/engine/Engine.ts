@@ -12,8 +12,7 @@ export async function mount<TModelType>(resourceSpecification: ResourceSpecifica
     viewCanvas.width = viewCanvas.clientWidth
     viewCanvas.height = viewCanvas.clientHeight
   }
-
-  const gl = viewCanvas.getContext("webgl2", { antialias: true })
+  const gl = viewCanvas.getContext("webgl2", { antialias: true, depth: true })
   if (gl === null) {
     console.error("Your browser doesn't support WebGL 2")
     return

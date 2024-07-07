@@ -5,7 +5,8 @@ export class Scene<TModelType> {
   public sprites : VoxelSprite<TModelType>[] = []
   public view = {
     camera: Camera.default(),
-    zFar: 220.0
+    zFar: 220.0,
+    zNear: 180.0
   }
 
   private _previousTime : number|null = null
