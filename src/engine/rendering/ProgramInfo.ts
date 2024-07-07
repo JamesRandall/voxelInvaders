@@ -8,5 +8,6 @@ export interface ProgramInfo {
   }
   uniforms: {
     projectionViewMatrix: WebGLUniformLocation
+    transformMatrix: WebGLUniformLocation
   }
 }

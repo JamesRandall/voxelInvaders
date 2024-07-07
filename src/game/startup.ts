@@ -9,7 +9,7 @@ export enum ModelType {
 
 (async () => await mount({
   voxelModels: [
-    //{ type: ModelType.InvaderFrame1, source: "invader1" },
+    { type: ModelType.InvaderFrame1, source: "invader1" },
     { type: ModelType.Player, source: "player" }
   ]
 }, GameScene.create))()

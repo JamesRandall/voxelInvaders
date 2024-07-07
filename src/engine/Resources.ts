@@ -2,7 +2,7 @@ import { VoxelModel } from "./models/VoxelModel"
 import { compileShaderProgram, ShaderSource } from "./rendering/shader"
 import { ResourceSpecification } from "./models/ResourceSpecification"
 import { VoxEdJson } from "./voxEd/VoxEdJson"
-import { createVoxelRenderingModel, VoxelRenderingModel } from "./rendering/createVoxelRenderingModel"
+import { createVoxelRenderingModel, VoxelRenderingModel } from "./rendering/VoxelRenderingModel"
 
 export interface ShaderProvider {
   getShader(name:string) : WebGLProgram|null

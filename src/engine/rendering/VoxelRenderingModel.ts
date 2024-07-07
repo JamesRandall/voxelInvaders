@@ -27,7 +27,7 @@ export function createVoxelRenderingModel<TModelType>(gl:WebGL2RenderingContext,
           const offset = vec3.fromValues(
             x+0.5-source.width/2,
             y+0.5-source.height/2,
-            z+0.5-source.depth/2)
+            -z+0.5-source.depth/2)
           appendDataForVoxel(vertices, vertexColors, vertexNormals, indices, voxel, offset, indexOffset)
           indexOffset += baseVertices.length
         }
@@ -53,7 +53,7 @@ export function createVoxelRenderingModel<TModelType>(gl:WebGL2RenderingContext,
     colors: colorBuffer!,
     normals: normalBuffer!,
     indices: indexBuffer!,
-    vertexCount: vertices.length/3
+    vertexCount: indices.length
   }
 }
 

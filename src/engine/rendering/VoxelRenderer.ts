@@ -2,7 +2,7 @@ import { Scene } from "../Scene"
 import { createProjectionViewMatrix, setupGl } from "./coregl"
 import { RenderingModelProvider, ShaderProvider } from "../Resources"
 import { AbstractRendererBase } from "./AbstractRendererBase"
-import { VoxelRenderingModel } from "./createVoxelRenderingModel"
+import { VoxelRenderingModel } from "./VoxelRenderingModel"
 import { ProgramInfo } from "./ProgramInfo"
 import { mat4 } from "gl-matrix"
 
@@ -42,10 +42,11 @@ export class VoxelRenderer<TModelType> extends AbstractRendererBase {
       const model = sprite.currentFrame
       const renderingModel = this._renderingModels.getRenderingModel(model.type)
       if (!renderingModel) { return }
+      const translateMatrix = mat4.translate(mat4.create(), mat4.create(), sprite.position)
+      gl.uniformMatrix4fv(this._programInfo.uniforms.transformMatrix, false, translateMatrix)
       this.setAttributes(gl, renderingModel)
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, renderingModel.indices)
       gl.drawElements(gl.TRIANGLES, renderingModel.vertexCount, gl.UNSIGNED_SHORT, 0)
-      //gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0)
     })
   }
 }

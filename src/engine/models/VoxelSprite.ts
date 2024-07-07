@@ -18,7 +18,6 @@ export class VoxelSprite<TModelType> {
 
   public velocity = vec3.fromValues(0,0,0)
 
-
   constructor(frames:VoxelModel<TModelType>[], position: vec3, options?:SpriteOptions) {
     // If a sprite is destructible then we want to copy the models as they will be modified
     // in response to destruction
@@ -32,6 +31,8 @@ export class VoxelSprite<TModelType> {
   public frame(index: number) { return this._frames[index] }
 
   public get currentFrame() { return this._frames[this._currentFrameIndex] }
+
+  public get position() { return this._position }
 
   public update(frameLength:number) {
     this.updateAnimationFrame(frameLength)

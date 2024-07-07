@@ -9,6 +9,7 @@ export function setupGl(gl: WebGL2RenderingContext) {
   gl.enable(gl.BLEND)
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+  gl.viewport(0,0,gl.canvas.width, gl.canvas.height)
 }
 
 export function createFrameBufferTexture(gl: WebGL2RenderingContext, width: number, height: number) {

@@ -36,7 +36,8 @@ export abstract class AbstractRendererBase {
         normal: gl.getAttribLocation(shaderProgram, "aNormal"),
       },
       uniforms: {
-        projectionViewMatrix: gl.getUniformLocation(shaderProgram, "uProjectionViewMatrix")!
+        projectionViewMatrix: gl.getUniformLocation(shaderProgram, "uProjectionViewMatrix")!,
+        transformMatrix: gl.getUniformLocation(shaderProgram, "uTransformMatrix")!,
       }
     }
   }
