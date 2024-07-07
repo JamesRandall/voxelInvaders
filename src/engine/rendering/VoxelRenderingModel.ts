@@ -1,11 +1,12 @@
 import { VoxelModel } from "../models/VoxelModel"
-import { vec3 } from "gl-matrix"
+import { vec2, vec3 } from "gl-matrix"
 import { Voxel } from "../models/Voxel"
 
 export interface VoxelRenderingModel {
   vertices: WebGLBuffer
   colors: WebGLBuffer
   normals: WebGLBuffer
+  textureCoordinates: WebGLBuffer
   indices: WebGLBuffer
   vertexCount: number
 }
@@ -17,6 +18,7 @@ export function createVoxelRenderingModel<TModelType>(gl:WebGL2RenderingContext,
   const indices: number[] = []
   const vertexColors: number[] = []
   const vertexNormals: number[] = []
+  const textureCoordinates: number[] = []
   let indexOffset = 0
 
   for(let z=0; z < source.depth; z++) {
@@ -25,10 +27,10 @@ export function createVoxelRenderingModel<TModelType>(gl:WebGL2RenderingContext,
         let voxel = source.voxels[z][y][x]
         if (voxel !== null) {
           const offset = vec3.fromValues(
-            x+0.5-source.width/2,
-            y+0.5-source.height/2,
-            -z+0.5-source.depth/2)
-          appendDataForVoxel(vertices, vertexColors, vertexNormals, indices, voxel, offset, indexOffset)
+            x+0.5-source.width/2+0.002,
+            y+0.5-source.height/2+0.002,
+            -z+0.5-source.depth/2+0.002)
+          appendDataForVoxel(vertices, vertexColors, vertexNormals, textureCoordinates, indices, voxel, offset, indexOffset)
           indexOffset += baseVertices.length
         }
       }
@@ -38,12 +40,19 @@ export function createVoxelRenderingModel<TModelType>(gl:WebGL2RenderingContext,
   const vertexBuffer = gl.createBuffer()
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
+
   const colorBuffer = gl.createBuffer()
   gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexColors), gl.STATIC_DRAW)
+
   const normalBuffer = gl.createBuffer()
   gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer)
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals), gl.STATIC_DRAW)
+
+  const textureCoordinateBuffer = gl.createBuffer()
+  gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordinateBuffer)
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates), gl.STATIC_DRAW)
+
   const indexBuffer = gl.createBuffer()
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW)
@@ -52,12 +61,21 @@ export function createVoxelRenderingModel<TModelType>(gl:WebGL2RenderingContext,
     vertices: vertexBuffer!,
     colors: colorBuffer!,
     normals: normalBuffer!,
+    textureCoordinates: textureCoordinateBuffer!,
     indices: indexBuffer!,
     vertexCount: indices.length
   }
 }
 
-function appendDataForVoxel(vertices:number[], vertexColors:number[], vertexNormals: number[], indices: number[], voxel:Voxel,offset:vec3,indexOffset:number) {
+function appendDataForVoxel(
+  vertices:number[],
+  vertexColors:number[],
+  vertexNormals: number[],
+  textureCoordinates:number[],
+  indices: number[],
+  voxel:Voxel,
+  offset:vec3,
+  indexOffset:number) {
 
   baseVertices.forEach(v => {
     const adjustedVertex = vec3.add(vec3.create(), v, offset)
@@ -74,7 +92,10 @@ function appendDataForVoxel(vertices:number[], vertexColors:number[], vertexNorm
     vertexNormals.push(n[0])
     vertexNormals.push(n[1])
     vertexNormals.push(n[2])
-    vertexNormals.push(n[3])
+  })
+  baseTextureCoordinates.forEach(tc => {
+    textureCoordinates.push(tc[0])
+    textureCoordinates.push(tc[1])
   })
   baseIndices.forEach(i => indices.push(i + indexOffset))
 }
@@ -143,6 +164,40 @@ const baseNormals = [
   vec3.fromValues(0.0,1.0,0.0),
   vec3.fromValues(0.0,1.0,0.0),
 ]
+
+const baseTextureCoordinates = [
+  // Front
+  vec2.fromValues(0.0,1.0),
+  vec2.fromValues(1.0,1.0),
+  vec2.fromValues(1.0,0.0),
+  vec2.fromValues(0.0,0.0),
+  // Rear
+  vec2.fromValues(0.0,1.0),
+  vec2.fromValues(1.0,1.0),
+  vec2.fromValues(1.0,0.0),
+  vec2.fromValues(0.0,0.0),
+  // Left
+  vec2.fromValues(0.0,1.0),
+  vec2.fromValues(1.0,1.0),
+  vec2.fromValues(1.0,0.0),
+  vec2.fromValues(0.0,0.0),
+  // Right
+  vec2.fromValues(0.0,1.0),
+  vec2.fromValues(1.0,1.0),
+  vec2.fromValues(1.0,0.0),
+  vec2.fromValues(0.0,0.0),
+  // Bottom
+  vec2.fromValues(0.0,1.0),
+  vec2.fromValues(1.0,1.0),
+  vec2.fromValues(1.0,0.0),
+  vec2.fromValues(0.0,0.0),
+  // Top
+  vec2.fromValues(0.0,1.0),
+  vec2.fromValues(1.0,1.0),
+  vec2.fromValues(1.0,0.0),
+  vec2.fromValues(0.0,0.0),
+]
+
 const baseIndices = [
   // Front
   0, 3, 2,
