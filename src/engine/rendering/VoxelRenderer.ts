@@ -23,7 +23,7 @@ export class VoxelRenderer<TModelType> extends AbstractRendererBase {
   private setAttributes(gl: WebGL2RenderingContext, model: VoxelRenderingModel) {
     this.setVertexAttribute(gl, model.vertices, this._programInfo.attributes.position)
     this.setVertexAttribute(gl, model.normals, this._programInfo.attributes.normal)
-    this.setColorAttribute(gl, model.vertices, this._programInfo.attributes.color)
+    this.setColorAttribute(gl, model.colors, this._programInfo.attributes.color)
   }
 
   private setUniforms(gl:WebGL2RenderingContext, projectionViewMatrix: mat4) {
