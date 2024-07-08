@@ -11,6 +11,7 @@ uniform vec3 uLightDiffuse;
 uniform vec3 uLightSpecular;
 uniform vec3 uCameraPosition;
 uniform float uShowOutline;
+uniform float uShininess;
 out vec4 outColor;
 
 vec3 phongLighting(vec3 worldPosition, vec3 diffuseColor, vec3 normal, vec3 viewPosition) {
@@ -19,13 +20,12 @@ vec3 phongLighting(vec3 worldPosition, vec3 diffuseColor, vec3 normal, vec3 view
 
     // Diffuse
     float diff = max(dot(normal, -uLightDirection), 0.0);
-    //float diff = max(dot(vec3(0.0,0.0,1.0), -uLightDirection), 0.0);
     vec3 diffuse = uLightDiffuse * diff * diffuseColor;
 
     // Specular
     vec3 viewDir = normalize(viewPosition - worldPosition);
     vec3 reflectDir = reflect(uLightDirection, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), uShininess);
     vec3 specular = uLightSpecular * spec;
 
     return ambient+ diffuse + specular;

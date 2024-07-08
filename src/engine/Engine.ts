@@ -30,7 +30,7 @@ export async function mount<TModelType>(resourceSpecification: ResourceSpecifica
       scene.resize()
     }, 100)
   })
-  const renderer = new VoxelRenderer(gl, resources, resources)
+  const renderer = scene.createRenderer(gl, resources, resources)
 
   function render(now: number) {
     scene = scene.update(now) ?? scene

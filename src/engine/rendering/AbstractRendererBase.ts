@@ -1,6 +1,7 @@
 import { PhongLightingProgramInfo } from "./PhongLightingProgramInfo"
+import { Scene } from "../Scene"
 
-export abstract class AbstractRendererBase {
+export abstract class AbstractRendererBase<TModelType> {
   private setAttribute(
     gl: WebGL2RenderingContext,
     buffer: WebGLBuffer,
@@ -53,7 +54,10 @@ export abstract class AbstractRendererBase {
         lightSpecular: gl.getUniformLocation(shaderProgram, "uLightSpecular")!,
         cameraPosition: gl.getUniformLocation(shaderProgram, "uCameraPosition")!,
         showOutline: gl.getUniformLocation(shaderProgram, "uShowOutline")!,
+        shininess: gl.getUniformLocation(shaderProgram, "uShininess")!,
       }
     }
   }
+
+  public abstract render(gl: WebGL2RenderingContext, scene:Scene<TModelType>) : void
 }

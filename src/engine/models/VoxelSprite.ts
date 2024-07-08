@@ -70,7 +70,7 @@ export class VoxelSprite<TModelType> {
 
     const delta = vec3.multiply(vec3.create(), this.velocity, [frameLength,frameLength,frameLength])
     if (this._unitBasedMovement) {
-      vec3.add(this._unitMovementDelta, this._position, delta)
+      vec3.add(this._unitMovementDelta, this._unitMovementDelta, delta)
       applyUnitMovementComponent(0)
       applyUnitMovementComponent(1)
       applyUnitMovementComponent(2)

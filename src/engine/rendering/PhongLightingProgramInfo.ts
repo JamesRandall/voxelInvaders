@@ -16,5 +16,6 @@ export interface PhongLightingProgramInfo {
     lightSpecular: WebGLUniformLocation
     cameraPosition: WebGLUniformLocation
     showOutline: WebGLUniformLocation
+    shininess: WebGLUniformLocation
   }
 }
