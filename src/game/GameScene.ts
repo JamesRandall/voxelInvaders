@@ -1,62 +1,80 @@
 import { Scene } from "../engine/Scene"
 import { RenderingModelProvider, Resources, ShaderProvider } from "../engine/Resources"
 import { ModelType } from "./startup"
-import { VoxelSprite } from "../engine/models/VoxelSprite"
 import { GameSceneRenderer } from "./GameSceneRenderer"
-import { AbstractRendererBase } from "../engine/rendering/AbstractRendererBase"
-import { VoxelRenderer } from "../engine/rendering/VoxelRenderer"
+import { AbstractRenderer } from "../engine/rendering/AbstractRenderer"
+import { vec3 } from "gl-matrix"
+import { PhongLightingModel } from "../engine/rendering/lightingModels/PhongLightingModel"
+import { Player } from "./Player"
+import { MarchingInvaders } from "./MarchingInvaders"
+import { Shields } from "./Shields"
 
-export class GameScene extends Scene<ModelType> {
-  constructor(private player:VoxelSprite<ModelType>) {
+const maxSceneDepth = 90.0
+
+export enum GameObjectType {
+  PlayerBullet,
+  InvaderBullet,
+  Shield,
+  Player,
+  Invader
+}
+
+export class GameScene extends Scene<ModelType,GameObjectType> {
+  private _player:Player
+  private _marchingInvaders:MarchingInvaders
+  private _shields:Shields
+
+  constructor(
+    public readonly resources:Resources<ModelType>)
+  {
     super()
-    this.sprites.push(player)
+    // closely fitting the near and far limits to the scene helps to minimise any z fighting type issues
+    this.view.zFar = Math.abs(this.view.camera.position[2]) + maxSceneDepth/2
+    this.view.zNear = Math.abs(this.view.camera.position[2]) - maxSceneDepth/2
+
+    this._player = new Player(this)
+    this._marchingInvaders = new MarchingInvaders(this)
+    this._shields = new Shields(this, this._marchingInvaders.totalInvaderRowWidth)
+
+    // constrain the player to the space taken up by the marching invaders
+    this._player.sprite.positionConstraint = {
+      min: vec3.fromValues(Math.floor(-this._marchingInvaders.totalInvaderRowWidth/2),-65,0),
+      max: vec3.fromValues(Math.ceil(this._marchingInvaders.totalInvaderRowWidth/2),-65,0),
+    }
   }
 
-  static create(gl:WebGL2RenderingContext, resources:Resources<ModelType>) {
-    const player = new VoxelSprite<ModelType>(
-      [resources.getModel(ModelType.Player)!],
-      [0,-65,0]
-    )
-    const invaderModel = resources.getModel(ModelType.InvaderFrame1)!
-    const spacing = 3
-    const invadersAcross = 11
-    const totalWidth = (invaderModel.width+spacing)*(invadersAcross-1)-spacing
-    const scene = new GameScene(player)
+  private getRotation() {
+    const maxRotation = 0.4
+    const proportion = this._player.position[0]/(this._marchingInvaders.totalInvaderRowWidth/2.0)
+    return maxRotation*proportion
+  }
 
-    for(let y=0; y < 5; y++) {
-      const spriteY = 65 - (y * (invaderModel.height+spacing))
-      for(let x=0; x< invadersAcross; x++) {
-        const spriteX = totalWidth/2 - (x * (invaderModel.width+spacing))
-        const invader = new VoxelSprite<ModelType>(
-          [invaderModel],
-          [spriteX,spriteY,0]
-        )
-        scene.sprites.push(invader)
+  public override createRenderer(
+    gl: WebGL2RenderingContext,
+    shaders: ShaderProvider,
+    renderingModels: RenderingModelProvider<ModelType>)  : AbstractRenderer<ModelType, GameObjectType> {
+    const lightingModel = new PhongLightingModel(
+      gl,
+      shaders, {
+        lightDirection: vec3.normalize(vec3.create(), [0.4,-0.4,0.4]),
+        ambientLight: vec3.fromValues(0.6,0.6,0.6),
+        diffuseLight: vec3.fromValues(0.6,0.6,0.6),
+        specularLight: vec3.fromValues(0.5,0.5,0.5),
+        shininess: 32.0
       }
-    }
-    return scene
-  }
+    )
+    return new GameSceneRenderer(renderingModels, lightingModel, () => this.getRotation())
 
-  public override createRenderer(gl: WebGL2RenderingContext, shaders: ShaderProvider, renderingModels: RenderingModelProvider<ModelType>)  : AbstractRendererBase<ModelType> {
-    return new GameSceneRenderer(gl, shaders, renderingModels)
-  }
-
-  override processKeyboardInput(key: string, isPressed: boolean) {
-    super.processKeyboardInput(key, isPressed)
-    switch(key) {
-      case "A":
-      case "a":
-        this.player.velocity = isPressed ? [-64.0,0.0,0.0] : [0.0,0.0,0.0]
-        break
-      case "D":
-      case "d":
-        this.player.velocity = isPressed ? [64.0,0.0,0.0] : [0.0,0.0,0.0]
-        break
-    }
+    // Just to illustrate the different lighting models
+    //const uniformLightingModel = new UniformLightingModel(gl, shaders)
+    //return new GameSceneRenderer(renderingModels, uniformLightingModel, () => this.getRotation())
   }
 
   override update(now: number) {
     super.update(now)
+    if (this.frameLength === null) { return this }
+    this._marchingInvaders.updateInvaders(this, this.frameLength)
+    this._player.applyControlState(this)
     return this
   }
 }

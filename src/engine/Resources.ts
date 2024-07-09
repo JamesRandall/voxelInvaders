@@ -1,5 +1,5 @@
 import { VoxelModel } from "./models/VoxelModel"
-import { compileShaderProgram, ShaderSource } from "./rendering/shader"
+import { compileShaderProgram } from "./rendering/shader"
 import { ResourceSpecification } from "./models/ResourceSpecification"
 import { VoxEdJson } from "./voxEd/VoxEdJson"
 import { createVoxelRenderingModel, VoxelRenderingModel } from "./rendering/VoxelRenderingModel"
@@ -39,7 +39,8 @@ export class Resources<TModelType> implements ShaderProvider, RenderingModelProv
 
   static async load<TModelType>(gl: WebGL2RenderingContext, specification:ResourceSpecification<TModelType>) {
     const shaderNames = [
-      "voxel"
+      "phong",
+      "uniform"
     ]
     const loadedShaderSource = await Promise.all(shaderNames.map(sn => loadShaderSource(sn)))
     const loadedModels = await Promise.all(specification.voxelModels.map(vn => loadVoxelModel(gl, vn)))
@@ -64,11 +65,16 @@ async function loadShaderSource(name: string) {
   }
 }
 
-async function loadVoxelModel<TModelType>(gl: WebGL2RenderingContext, src:{type: TModelType,source:string}) {
-  const response = await fetch(`voxelModels/${src.source}.json`)
-  const voxEdModel : VoxEdJson.Model  = await response.json()
-  const model = VoxEdJson.createFromVoxEd<TModelType>(src.type, voxEdModel)
-  const renderingModel = createVoxelRenderingModel(gl, model)
-
-  return { type:src.type, model, renderingModel }
+async function loadVoxelModel<TModelType>(gl: WebGL2RenderingContext, src:{type: TModelType,source:string|VoxelModel<TModelType>}) {
+  if (typeof src.source === 'string') {
+    const response = await fetch(`voxelModels/${src.source}.json`)
+    const voxEdModel: VoxEdJson.Model = await response.json()
+    const model = VoxEdJson.createFromVoxEd<TModelType>(src.type, voxEdModel)
+    const renderingModel = createVoxelRenderingModel(gl, model)
+    return { type: src.type, model, renderingModel }
+  }
+  else {
+    const renderingModel = createVoxelRenderingModel(gl, src.source)
+    return { type: src.type, model: src.source, renderingModel }
+  }
 }

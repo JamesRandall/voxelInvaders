@@ -1,5 +1,6 @@
 import { VoxelModel } from "./VoxelModel"
 import { vec3 } from "gl-matrix"
+import { WorldObject } from "./WorldObject"
 
 export interface SpriteOptions {
   isDestructible?: boolean
@@ -7,32 +8,24 @@ export interface SpriteOptions {
   unitBasedMovement?: boolean // if set to true then the sprite will move on the voxel grid
 }
 
-export class VoxelSprite<TModelType> {
+export class VoxelSprite<TModelType, TWorldObjectType> extends WorldObject<TWorldObjectType>  {
   private readonly _frames:VoxelModel<TModelType>[]
   private readonly _animationFrameDuration:number|null
-  private readonly _unitBasedMovement:boolean
-  private _position:vec3
   private _timeToNextFrame:number
   private _currentFrameIndex = 0
-  private _unitMovementDelta = vec3.fromValues(0,0,0)
-
-  public velocity = vec3.fromValues(0,0,0)
 
   constructor(frames:VoxelModel<TModelType>[], position: vec3, options?:SpriteOptions) {
+    super(position, options?.unitBasedMovement ?? true)
     // If a sprite is destructible then we want to copy the models as they will be modified
     // in response to destruction
     this._frames = (options?.isDestructible ?? false) ? frames.map(VoxelModel.copy) : frames
     this._animationFrameDuration = (options?.animationFrameDuration ?? 0)
-    this._unitBasedMovement = (options?.unitBasedMovement ?? true)
-    this._position = position
     this._timeToNextFrame = this._animationFrameDuration
   }
 
   public frame(index: number) { return this._frames[index] }
 
   public get currentFrame() { return this._frames[this._currentFrameIndex] }
-
-  public get position() { return this._position }
 
   public update(frameLength:number) {
     this.updateAnimationFrame(frameLength)
@@ -54,29 +47,5 @@ export class VoxelSprite<TModelType> {
     }
   }
 
-  private updatePosition(frameLength: number) {
-    const applyUnitMovementComponent = (component:number) => {
-      if (this._unitMovementDelta[component] > 1) {
-        const delta = Math.floor(this._unitMovementDelta[component])
-        this._position[component] += delta
-        this._unitMovementDelta[component] -= delta
-      }
-      else if (this._unitMovementDelta[component] < -1) {
-        const delta = Math.ceil(this._unitMovementDelta[component])
-        this._position[component] += delta
-        this._unitMovementDelta[component] -= delta
-      }
-    }
 
-    const delta = vec3.multiply(vec3.create(), this.velocity, [frameLength,frameLength,frameLength])
-    if (this._unitBasedMovement) {
-      vec3.add(this._unitMovementDelta, this._unitMovementDelta, delta)
-      applyUnitMovementComponent(0)
-      applyUnitMovementComponent(1)
-      applyUnitMovementComponent(2)
-    }
-    else {
-      vec3.add(this._position, this._position, delta)
-    }
-  }
 }

@@ -4,6 +4,6 @@ export class Camera {
   constructor(public position:vec3, public lookAt:vec3) { }
 
   public static default() {
-    return new Camera([0,0,200], [0,0,0])
+    return new Camera([0,0,220], [0,0,0])
   }
 }

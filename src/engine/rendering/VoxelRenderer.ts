@@ -1,63 +1,49 @@
 import { Scene } from "../Scene"
 import { createProjectionViewMatrix, setupGl } from "./coregl"
-import { RenderingModelProvider, ShaderProvider } from "../Resources"
-import { AbstractRendererBase } from "./AbstractRendererBase"
+import { RenderingModelProvider } from "../Resources"
+import { AbstractRenderer } from "./AbstractRenderer"
 import { VoxelRenderingModel } from "./VoxelRenderingModel"
-import { PhongLightingProgramInfo } from "./PhongLightingProgramInfo"
-import { mat4, vec3 } from "gl-matrix"
+import { mat4 } from "gl-matrix"
 import { VoxelSprite } from "../models/VoxelSprite"
+import { AbstractLightingModel } from "./lightingModels/AbstractLightingModel"
 
-export class VoxelRenderer<TModelType> extends AbstractRendererBase<TModelType> {
-  private _shaderProgram : WebGLProgram
+export class VoxelRenderer<TModelType,TWorldObjectType> extends AbstractRenderer<TModelType, TWorldObjectType> {
   private _renderingModels : RenderingModelProvider<TModelType>
-  private _programInfo: PhongLightingProgramInfo
 
-  constructor(gl: WebGL2RenderingContext, shaders: ShaderProvider, renderingModels: RenderingModelProvider<TModelType>) {
+  constructor(renderingModels: RenderingModelProvider<TModelType>, private lightingModel: AbstractLightingModel) {
     super()
-    const shaderProgram = shaders.getShader('voxel')
-    if (!shaderProgram) { throw new Error("Unable to find voxel shader")}
-    this._shaderProgram = shaderProgram
     this._renderingModels = renderingModels
-    this._programInfo = this.createProgramInfo(gl, this._shaderProgram)
   }
 
   private setAttributes(gl: WebGL2RenderingContext, model: VoxelRenderingModel) {
-    this.setVertexAttribute(gl, model.vertices, this._programInfo.attributes.position)
-    this.setVertexAttribute(gl, model.normals, this._programInfo.attributes.normal)
-    this.setColorAttribute(gl, model.colors, this._programInfo.attributes.color)
-    this.setTextureAttribute(gl, model.textureCoordinates, this._programInfo.attributes.texCoord)
+    this.lightingModel.setAttributes(gl)
+    this.setVertexAttribute(gl, model.vertices, this.lightingModel.programInfo.attributes.position)
+    this.setVertexAttribute(gl, model.normals, this.lightingModel.programInfo.attributes.normal)
+    this.setColorAttribute(gl, model.colors, this.lightingModel.programInfo.attributes.color)
+    this.setTextureAttribute(gl, model.textureCoordinates, this.lightingModel.programInfo.attributes.texCoord)
   }
 
-  private setUniforms(gl:WebGL2RenderingContext, scene:Scene<TModelType>, projectionViewMatrix: mat4) {
-    gl.uniformMatrix4fv(this._programInfo.uniforms.projectionViewMatrix, false, projectionViewMatrix)
-    gl.uniform3fv(this._programInfo.uniforms.lightDirection, vec3.normalize(vec3.create(), [0.4,-0.4,0.4]))
-    gl.uniform3f(this._programInfo.uniforms.lightAmbient, 0.4,0.4,0.4)
-    gl.uniform3fv(this._programInfo.uniforms.lightDiffuse, [1.0,1.0,1.0])
-    gl.uniform3fv(this._programInfo.uniforms.lightSpecular, [0.5,0.5,0.5])
-    gl.uniform3fv(this._programInfo.uniforms.cameraPosition, scene.view.camera.position)
-    gl.uniform1f(this._programInfo.uniforms.showOutline, 0.0)
-    gl.uniform1f(this._programInfo.uniforms.shininess, 2.0)
+  private setUniforms(gl:WebGL2RenderingContext, scene:Scene<TModelType, TWorldObjectType>, projectionViewMatrix: mat4) {
+    this.lightingModel.setUniforms(gl, scene.view.camera, projectionViewMatrix)
+    gl.uniformMatrix4fv(this.lightingModel.programInfo.uniforms.projectionViewMatrix, false, projectionViewMatrix)
+    gl.uniform1f(this.lightingModel.programInfo.uniforms.showOutlines, 0.0)
   }
 
-  public getPreTranslateRotationMatrix(sprite: VoxelSprite<TModelType>) {
+  public getPreTranslateRotationMatrix(sprite: VoxelSprite<TModelType, TWorldObjectType>) {
     return mat4.create()
   }
 
-  public getPostTranslateRotationMatrix(sprite: VoxelSprite<TModelType>) {
+  public getPostTranslateRotationMatrix(sprite: VoxelSprite<TModelType, TWorldObjectType>) {
     return mat4.create()
   }
 
-  public override render(gl: WebGL2RenderingContext, scene:Scene<TModelType>) {
+  public override render(gl: WebGL2RenderingContext, scene:Scene<TModelType, TWorldObjectType>) {
     const width = gl.canvas.width
     const height = gl.canvas.height
     const projectionViewMatrix = createProjectionViewMatrix(width, height, scene.view.zFar, scene.view.camera.position, scene.view.camera.lookAt, scene.view.zNear)
     setupGl(gl)
 
-    // this prevents small lines appearing between the voxels
-    gl.enable(gl.POLYGON_OFFSET_FILL)
-    gl.polygonOffset(1.0, 1.0)
-
-    gl.useProgram(this._shaderProgram)
+    gl.useProgram(this.lightingModel.shaderProgram)
     this.setUniforms(gl, scene, projectionViewMatrix)
 
     scene.sprites.forEach(sprite => {
@@ -71,7 +57,7 @@ export class VoxelRenderer<TModelType> extends AbstractRendererBase<TModelType> 
         mat4.multiply(mat4.create(), postTranslateRotateMatrix, translateMatrix),
         preTranslateRotateMatrix
       )
-      gl.uniformMatrix4fv(this._programInfo.uniforms.transformMatrix, false, worldMatrix)
+      gl.uniformMatrix4fv(this.lightingModel.programInfo.uniforms.transformMatrix, false, worldMatrix)
       this.setAttributes(gl, renderingModel)
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, renderingModel.indices)
       gl.drawElements(gl.TRIANGLES, renderingModel.vertexCount, gl.UNSIGNED_SHORT, 0)

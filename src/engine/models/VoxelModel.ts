@@ -1,6 +1,4 @@
-import { VoxEdJson } from "../voxEd/VoxEdJson"
 import { Voxel } from "./Voxel"
-import { VoxelColor } from "./VoxelColor"
 
 export class VoxelModel<TModelType> {
   constructor(public type: TModelType, public width:number, public height:number, public depth:number, public voxels:(Voxel|null)[][][]) {

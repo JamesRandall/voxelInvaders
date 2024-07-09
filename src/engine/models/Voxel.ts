@@ -1,5 +1,4 @@
 import { VoxelColor } from "./VoxelColor"
-import { VoxelPosition } from "./VoxelPosition"
 
 export class Voxel {
   constructor(public color:VoxelColor) { }

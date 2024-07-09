@@ -1,11 +1,10 @@
 import { ResourceSpecification } from "./models/ResourceSpecification"
 import { Scene } from "./Scene"
 import { Resources } from "./Resources"
-import { VoxelRenderer } from "./rendering/VoxelRenderer"
 
 require("../extensions.ts")
 
-export async function mount<TModelType>(resourceSpecification: ResourceSpecification<TModelType>, initialSceneFactory:(gl:WebGL2RenderingContext,resources:Resources<TModelType>)=>Scene<TModelType>) {
+export async function mount<TModelType, TWorldObjectType>(resourceSpecification: ResourceSpecification<TModelType>, initialSceneFactory:(gl:WebGL2RenderingContext,resources:Resources<TModelType>)=>Scene<TModelType, TWorldObjectType>) {
   const viewCanvas = document.getElementById("canvas") as HTMLCanvasElement
 
   function setSize() {
@@ -17,6 +16,9 @@ export async function mount<TModelType>(resourceSpecification: ResourceSpecifica
     console.error("Your browser doesn't support WebGL 2")
     return
   }
+
+  var depthBits = gl.getParameter(gl.DEPTH_BITS);
+  console.log("Depth buffer precision: " + depthBits + " bits");
 
   const resources : Resources<TModelType> = await Resources.load(gl, resourceSpecification)
   setSize()
