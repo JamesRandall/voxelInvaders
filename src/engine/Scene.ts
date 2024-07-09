@@ -5,6 +5,7 @@ import { VoxelRenderer } from "./rendering/VoxelRenderer"
 import { AbstractRenderer } from "./rendering/AbstractRenderer"
 import { PhongLightingModel } from "./rendering/lightingModels/PhongLightingModel"
 import { vec3 } from "gl-matrix"
+import { UniformLightingModel } from "./rendering/lightingModels/UniformLightingModel"
 
 export interface KeyboardHandler {
   processKeyboardInput(key: string, isPressed: boolean) : void
@@ -60,14 +61,9 @@ export class Scene<TModelType, TWorldObjectType> {
   }
 
   public createRenderer(gl: WebGL2RenderingContext, shaders: ShaderProvider, renderingModels: RenderingModelProvider<TModelType>)  : AbstractRenderer<TModelType, TWorldObjectType> {
-    const lightingModel = new PhongLightingModel(
+    const lightingModel = new UniformLightingModel(
       gl,
-      shaders,
-      vec3.normalize(vec3.create(), [0.4,-0.4,0.4]),
-      vec3.fromValues(0.4,0.4,0.4),
-      vec3.fromValues(1.0,1.0,1.0),
-      vec3.fromValues(0.5,0.5,0.5),
-      16.0
+      shaders
     )
     return new VoxelRenderer(renderingModels, lightingModel)
   }
