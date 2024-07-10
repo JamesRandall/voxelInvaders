@@ -19,8 +19,6 @@ export class Scene<TModelType, TWorldObjectType> {
     zFar: 100.0,
     zNear: 0.1
   }
-  private _previousTime : number|null = null
-  protected frameLength : number|null = null
 
   constructor() {
     window.addEventListener("keydown", e => this.keyDown(e))
@@ -43,21 +41,13 @@ export class Scene<TModelType, TWorldObjectType> {
     this._keyboardHandlers.push(handler)
   }
 
-  public update(now: number) : Scene<TModelType,TWorldObjectType> | null {
-    // This prevents a big stutter on the first frame
-    if (this._previousTime === null) {
-      this._previousTime = now
-      return this
-    }
-    this.frameLength = (now - this._previousTime) / 1000
-    this._previousTime = now
-
-    this.updateSprites(this.frameLength)
+  public update(frameLength: number) : Scene<TModelType,TWorldObjectType> | null {
+    this.updateSprites(frameLength)
     return this
   }
 
-  protected updateSprites(frameTime: number) {
-    this.sprites.forEach(sprite => sprite.update(frameTime))
+  protected updateSprites(frameLength: number) {
+    this.sprites.forEach(sprite => sprite.update(frameLength))
   }
 
   public createRenderer(gl: WebGL2RenderingContext, shaders: ShaderProvider, renderingModels: RenderingModelProvider<TModelType>)  : AbstractRenderer<TModelType, TWorldObjectType> {

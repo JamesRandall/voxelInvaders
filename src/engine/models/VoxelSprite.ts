@@ -46,6 +46,4 @@ export class VoxelSprite<TModelType, TWorldObjectType> extends WorldObject<TWorl
       }
     }
   }
-
-
 }

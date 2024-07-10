@@ -34,9 +34,19 @@ export async function mount<TModelType, TWorldObjectType>(resourceSpecification:
   })
   const renderer = scene.createRenderer(gl, resources, resources)
 
+  let previousTime : number|null = null
   function render(now: number) {
-    scene = scene.update(now) ?? scene
-    renderer.render(gl!, scene)
+    // This prevents a big stutter on the first frame - we want to wait for the first frame to get a delta
+    if (previousTime === null) {
+      previousTime = now
+    }
+    else {
+      let frameLength = (now - previousTime) / 1000
+      previousTime = now
+      scene = scene.update(frameLength) ?? scene
+      renderer.render(gl!, scene)
+    }
+
     requestAnimationFrame(render)
   }
   requestAnimationFrame(render)

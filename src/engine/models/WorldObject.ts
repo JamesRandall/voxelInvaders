@@ -29,14 +29,14 @@ export class WorldObject<TWorldObjectType> {
   public updatePosition(frameLength: number) {
     const applyUnitMovementComponent = (component:number) => {
       if (this._unitMovementDelta[component] >= 1) {
-        const delta = Math.floor(this._unitMovementDelta[component])
-        this._position[component] += delta
-        this._unitMovementDelta[component] -= delta
+        const unitDelta = Math.floor(this._unitMovementDelta[component])
+        this._position[component] += unitDelta
+        this._unitMovementDelta[component] -= unitDelta
       }
       else if (this._unitMovementDelta[component] <= -1) {
-        const delta = Math.ceil(this._unitMovementDelta[component])
-        this._position[component] += delta
-        this._unitMovementDelta[component] -= delta
+        const unitDelta = Math.ceil(this._unitMovementDelta[component])
+        this._position[component] += unitDelta
+        this._unitMovementDelta[component] -= unitDelta
       }
     }
 

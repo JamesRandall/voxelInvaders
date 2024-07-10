@@ -70,10 +70,9 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
     //return new GameSceneRenderer(renderingModels, uniformLightingModel, () => this.getRotation())
   }
 
-  override update(now: number) {
-    super.update(now)
-    if (this.frameLength === null) { return this }
-    this._marchingInvaders.updateInvaders(this, this.frameLength)
+  override update(frameLength: number) {
+    super.update(frameLength)
+    this._marchingInvaders.updateInvaders(this, frameLength)
     this._player.applyControlState(this)
     return this
   }
