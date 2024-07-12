@@ -32,7 +32,7 @@ export class Collisions<TModelType, TWorldObjectType> {
     return AxisAlignedBox.intersection(boxA, boxB)
   }
 
-  public evaluateCollisions(sprites:VoxelSprite<TModelType, TWorldObjectType>[]) {
+  public evaluateCollisions(sprites:ReadonlyArray<VoxelSprite<TModelType, TWorldObjectType>>) {
     if (this._collisionTypes.size === 0) { return }
     sprites.forEach(sprite => {
       if (sprite.tag === null || sprite.isRemoved) { return }

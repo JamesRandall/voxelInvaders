@@ -17,7 +17,7 @@ export class Player implements KeyboardHandler {
       [scene.resources.getModel(ModelType.Player)!],
       [0,-65,0]
     )
-    scene.sprites.push(this.sprite)
+    scene.addSprite(this.sprite)
     scene.registerKeyboardHandler(this)
   }
 
@@ -47,7 +47,7 @@ export class Player implements KeyboardHandler {
     )
     bullet.velocity = vec3.fromValues(0,150,0)
     bullet.tag = GameObjectType.Bullet
-    scene.sprites.push(bullet)
+    scene.addSprite(bullet)
   }
 
   public applyControlState(scene:GameScene) {

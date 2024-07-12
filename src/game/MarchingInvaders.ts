@@ -30,7 +30,7 @@ export class MarchingInvaders {
         )
         invader.tag = GameObjectType.Invader
         invader.velocity = vec3.fromValues(startingInvaderSpeed,0,0)
-        scene.sprites.push(invader)
+        scene.addSprite(invader)
       }
     }
     this._invaderReferencePoint.velocity = vec3.fromValues(startingInvaderSpeed,0,0)

@@ -17,7 +17,7 @@ export class Shields {
         [model],
         [shieldX,-46,0]
       )
-      scene.sprites.push(sprite)
+      scene.addSprite(sprite)
       this._sprites.push(sprite)
       shieldX += sprite.currentFrame.width + space
     }
