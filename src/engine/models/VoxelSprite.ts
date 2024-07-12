@@ -1,6 +1,7 @@
 import { VoxelModel } from "./VoxelModel"
 import { vec3 } from "gl-matrix"
 import { WorldObject } from "./WorldObject"
+import { AxisAlignedBox } from "./AxisAlignedBox"
 
 export interface SpriteOptions {
   isDestructible?: boolean
@@ -45,5 +46,15 @@ export class VoxelSprite<TModelType, TWorldObjectType> extends WorldObject<TWorl
         this._currentFrameIndex = 0
       }
     }
+  }
+
+  public getBoundingBox(): AxisAlignedBox {
+    const halfSize = vec3.div(vec3.create(), this.currentFrame.size, [2,2,2])
+
+    // TODO: we need to make sure this rounding is consistent with positioning on odd numbered dimensions
+    const minCoords = vec3.ceil(vec3.create(), vec3.subtract(vec3.create(), this.position, halfSize))
+    const maxCoords = vec3.ceil(vec3.create(), vec3.add(vec3.create(), this.position, halfSize))
+
+    return new AxisAlignedBox(minCoords, maxCoords);
   }
 }

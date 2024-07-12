@@ -3,7 +3,7 @@ import { GameSprite } from "./GameSprite"
 import { KeyboardHandler } from "../engine/Scene"
 import { ModelType } from "./startup"
 import { vec3 } from "gl-matrix"
-import { GameScene } from "./GameScene"
+import { GameObjectType, GameScene } from "./GameScene"
 
 const playerSpeed = 64.0
 
@@ -45,7 +45,8 @@ export class Player implements KeyboardHandler {
       [scene.resources.getModel(ModelType.Bullet)!],
       vec3.copy(vec3.create(),this.position)
     )
-    bullet.velocity = vec3.fromValues(0,100,0)
+    bullet.velocity = vec3.fromValues(0,150,0)
+    bullet.tag = GameObjectType.Bullet
     scene.sprites.push(bullet)
   }
 

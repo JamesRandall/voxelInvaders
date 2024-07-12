@@ -2,6 +2,8 @@ import { GameSprite } from "./GameSprite"
 import { GameScene } from "./GameScene"
 import { ModelType } from "./startup"
 
+
+
 export class Shields {
   private _sprites:GameSprite[] = []
 

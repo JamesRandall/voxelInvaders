@@ -3,9 +3,8 @@ import { Camera } from "./Camera"
 import { RenderingModelProvider, ShaderProvider } from "./Resources"
 import { VoxelRenderer } from "./rendering/VoxelRenderer"
 import { AbstractRenderer } from "./rendering/AbstractRenderer"
-import { PhongLightingModel } from "./rendering/lightingModels/PhongLightingModel"
-import { vec3 } from "gl-matrix"
 import { UniformLightingModel } from "./rendering/lightingModels/UniformLightingModel"
+import { CollisionHandler, Collisions } from "./Collisions"
 
 export interface KeyboardHandler {
   processKeyboardInput(key: string, isPressed: boolean) : void
@@ -13,6 +12,8 @@ export interface KeyboardHandler {
 
 export class Scene<TModelType, TWorldObjectType> {
   private _keyboardHandlers:KeyboardHandler[] = []
+  private readonly _collisions = new Collisions<TModelType, TWorldObjectType>()
+
   public sprites : VoxelSprite<TModelType, TWorldObjectType>[] = []
   public view = {
     camera: Camera.default(),
@@ -37,12 +38,17 @@ export class Scene<TModelType, TWorldObjectType> {
 
   }
 
+  public registerCollisionType(type:TWorldObjectType, collidesWith:TWorldObjectType|TWorldObjectType[], handler:CollisionHandler<TModelType,TWorldObjectType>) {
+    this._collisions.registerCollisionType(type, collidesWith, handler)
+  }
+
   public registerKeyboardHandler(handler:KeyboardHandler) {
     this._keyboardHandlers.push(handler)
   }
 
   public update(frameLength: number) : Scene<TModelType,TWorldObjectType> | null {
     this.updateSprites(frameLength)
+    this._collisions.evaluateCollisions(this.sprites)
     return this
   }
 
@@ -56,6 +62,13 @@ export class Scene<TModelType, TWorldObjectType> {
       shaders
     )
     return new VoxelRenderer(renderingModels, lightingModel)
+  }
+
+  public removeSprite(sprite:VoxelSprite<TModelType, TWorldObjectType>) {
+    const index = this.sprites.indexOf(sprite);
+    if (index > -1) {
+      this.sprites.splice(index, 1);
+    }
   }
 }
 

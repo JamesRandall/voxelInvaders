@@ -1,8 +1,11 @@
 import { Voxel } from "./Voxel"
+import { vec3 } from "gl-matrix"
 
 export class VoxelModel<TModelType> {
-  constructor(public type: TModelType, public width:number, public height:number, public depth:number, public voxels:(Voxel|null)[][][]) {
+  public readonly size:vec3
 
+  constructor(public type: TModelType, public readonly width:number, public readonly height:number, public readonly depth:number, public voxels:(Voxel|null)[][][]) {
+    this.size = vec3.fromValues(width, height, depth)
   }
 
   static copy<TModelType>(src: VoxelModel<TModelType>): VoxelModel<TModelType> {

@@ -8,12 +8,13 @@ import { PhongLightingModel } from "../engine/rendering/lightingModels/PhongLigh
 import { Player } from "./Player"
 import { MarchingInvaders } from "./MarchingInvaders"
 import { Shields } from "./Shields"
+import { GameSprite } from "./GameSprite"
+import { AxisAlignedBox } from "../engine/models/AxisAlignedBox"
 
 const maxSceneDepth = 90.0
 
 export enum GameObjectType {
-  PlayerBullet,
-  InvaderBullet,
+  Bullet,
   Shield,
   Player,
   Invader
@@ -41,6 +42,11 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
       min: vec3.fromValues(Math.floor(-this._marchingInvaders.totalInvaderRowWidth/2),-65,0),
       max: vec3.fromValues(Math.ceil(this._marchingInvaders.totalInvaderRowWidth/2),-65,0),
     }
+
+    this.registerCollisionType(
+      GameObjectType.Bullet,
+      [GameObjectType.Invader, GameObjectType.Shield, GameObjectType.Player],
+      (a,b,intersection) => this.handleBulletCollision(a,b,intersection))
   }
 
   private getRotation() {
@@ -75,5 +81,12 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
     this._marchingInvaders.updateInvaders(this, frameLength)
     this._player.applyControlState(this)
     return this
+  }
+
+  private handleBulletCollision(sourceSprite: GameSprite, targetSprite: GameSprite, intersection:AxisAlignedBox) {
+    if (targetSprite.tag === GameObjectType.Invader) {
+      this.removeSprite(sourceSprite)
+      this.removeSprite(targetSprite)
+    }
   }
 }
