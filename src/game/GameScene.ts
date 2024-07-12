@@ -85,8 +85,8 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
 
   private handleBulletCollision(sourceSprite: GameSprite, targetSprite: GameSprite, intersection:AxisAlignedBox) {
     if (targetSprite.tag === GameObjectType.Invader) {
-      this.removeSprite(sourceSprite)
-      this.removeSprite(targetSprite)
+      sourceSprite.isRemoved = true
+      targetSprite.isRemoved = true
     }
   }
 }

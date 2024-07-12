@@ -49,6 +49,7 @@ export class Scene<TModelType, TWorldObjectType> {
   public update(frameLength: number) : Scene<TModelType,TWorldObjectType> | null {
     this.updateSprites(frameLength)
     this._collisions.evaluateCollisions(this.sprites)
+    this.removeSpritesMarkedForRemoval()
     return this
   }
 
@@ -64,11 +65,8 @@ export class Scene<TModelType, TWorldObjectType> {
     return new VoxelRenderer(renderingModels, lightingModel)
   }
 
-  public removeSprite(sprite:VoxelSprite<TModelType, TWorldObjectType>) {
-    const index = this.sprites.indexOf(sprite);
-    if (index > -1) {
-      this.sprites.splice(index, 1);
-    }
+  private removeSpritesMarkedForRemoval() {
+    this.sprites = this.sprites.filter(s => !s.isRemoved)
   }
 }
 

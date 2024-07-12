@@ -34,15 +34,12 @@ export class Collisions<TModelType, TWorldObjectType> {
 
   public evaluateCollisions(sprites:VoxelSprite<TModelType, TWorldObjectType>[]) {
     if (this._collisionTypes.size === 0) { return }
-    // Work on a copy of the sprite array as it might get modified by the handlers - eventually we'll hide the sprites
-    // array and put an API round it
-    const copyOfSprites = [...sprites]
-    copyOfSprites.forEach(sprite => {
-      if (sprite.tag === null) { return }
+    sprites.forEach(sprite => {
+      if (sprite.tag === null || sprite.isRemoved) { return }
       const collisionType = this._collisionTypes.get(sprite.tag)
       if (!collisionType) { return }
-      copyOfSprites.forEach(otherSprite => {
-        if (otherSprite.tag === null) { return }
+      sprites.forEach(otherSprite => {
+        if (otherSprite.tag === null || sprite.isRemoved) { return }
         const handler = collisionType.get(otherSprite.tag)
         if (!handler) { return }
         const broadRangeIntersection = this.broadRangeIntersection(sprite, otherSprite)

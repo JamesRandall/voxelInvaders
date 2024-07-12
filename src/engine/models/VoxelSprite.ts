@@ -14,6 +14,7 @@ export class VoxelSprite<TModelType, TWorldObjectType> extends WorldObject<TWorl
   private readonly _animationFrameDuration:number|null
   private _timeToNextFrame:number
   private _currentFrameIndex = 0
+  public isRemoved = false
 
   constructor(frames:VoxelModel<TModelType>[], position: vec3, options?:SpriteOptions) {
     super(position, options?.unitBasedMovement ?? true)
