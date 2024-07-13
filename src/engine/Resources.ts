@@ -42,6 +42,7 @@ export class Resources<TModelType> implements ShaderProvider, RenderingModelProv
       "voxel_phong",
       "voxel_uniform",
       "particle_uniform",
+      "particle_phong",
     ]
     const loadedShaderSource = await Promise.all(shaderNames.map(sn => loadShaderSource(sn)))
     const loadedModels = await Promise.all(specification.voxelModels.map(vn => loadVoxelModel(gl, vn)))

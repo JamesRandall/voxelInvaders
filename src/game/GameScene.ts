@@ -4,7 +4,7 @@ import { ModelType } from "./startup"
 import { GameSceneRenderer } from "./GameSceneRenderer"
 import { AbstractRenderer } from "../engine/rendering/AbstractRenderer"
 import { vec3 } from "gl-matrix"
-import { PhongLightingModel } from "../engine/rendering/lightingModels/PhongLightingModel"
+import { ParticlePhongLightingModel, PhongLightingModel } from "../engine/rendering/lightingModels/PhongLightingModel"
 import { Player } from "./Player"
 import { MarchingInvaders } from "./MarchingInvaders"
 import { Shields } from "./Shields"
@@ -88,7 +88,18 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
   }
 
   override createParticleRenderer(gl: WebGL2RenderingContext, shaders: ShaderProvider): AbstractRenderer<ModelType, GameObjectType> {
-    return new GameVoxelParticleSetRenderer(gl, new ParticleUniformLightingModel(gl, shaders), this.getRotation.bind(this))
+    const lightingModel = new ParticlePhongLightingModel(
+      gl,
+      shaders, {
+        lightDirection: vec3.normalize(vec3.create(), [0.4,-0.4,0.4]),
+        ambientLight: vec3.fromValues(0.6,0.6,0.6),
+        diffuseLight: vec3.fromValues(0.6,0.6,0.6),
+        specularLight: vec3.fromValues(0.5,0.5,0.5),
+        shininess: 32.0
+      })
+
+    return new GameVoxelParticleSetRenderer(gl, lightingModel, this.getRotation.bind(this))
+    //return new GameVoxelParticleSetRenderer(gl, new ParticleUniformLightingModel(gl, shaders), this.getRotation.bind(this))
   }
 
 
