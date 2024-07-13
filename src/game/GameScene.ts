@@ -11,6 +11,12 @@ import { Shields } from "./Shields"
 import { GameSprite } from "./GameSprite"
 import { AxisAlignedBox } from "../engine/models/AxisAlignedBox"
 import { VoxelParticleSetRenderer } from "../engine/rendering/VoxelParticleSetRenderer"
+import { Explosion } from "./Explosion"
+import { GameVoxelParticleSetRenderer } from "./GameVoxelParticleSetRenderer"
+import {
+  ParticleUniformLightingModel,
+  UniformLightingModel
+} from "../engine/rendering/lightingModels/UniformLightingModel"
 
 const maxSceneDepth = 90.0
 
@@ -47,7 +53,8 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
     this.registerCollisionType(
       GameObjectType.Bullet,
       [GameObjectType.Invader, GameObjectType.Shield, GameObjectType.Player],
-      (a,b,intersection) => this.handleBulletCollision(a,b,intersection))
+      this.handleBulletCollision.bind(this)
+    )
   }
 
   private getRotation() {
@@ -73,7 +80,7 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
     shaders: ShaderProvider,
     renderingModels: RenderingModelProvider<ModelType>)  : AbstractRenderer<ModelType, GameObjectType> {
     const lightingModel = this.createLightingModel(gl, shaders)
-    return new GameSceneRenderer(renderingModels, lightingModel, () => this.getRotation())
+    return new GameSceneRenderer(renderingModels, lightingModel, this.getRotation.bind(this))
 
     // Just to illustrate the different lighting models
     //const uniformLightingModel = new UniformLightingModel(gl, shaders)
@@ -81,22 +88,22 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
   }
 
   override createParticleRenderer(gl: WebGL2RenderingContext, shaders: ShaderProvider): AbstractRenderer<ModelType, GameObjectType> {
-    const lightingModel = this.createLightingModel(gl, shaders)
-    return super.createParticleRenderer(gl, shaders)
+    return new GameVoxelParticleSetRenderer(gl, new ParticleUniformLightingModel(gl, shaders), this.getRotation.bind(this))
   }
 
 
-  override update(frameLength: number) {
-    super.update(frameLength)
+  override update(gl: WebGL2RenderingContext, frameLength: number) {
+    super.update(gl, frameLength)
     this._marchingInvaders.updateInvaders(this, frameLength)
     this._player.applyControlState(this)
     return this
   }
 
-  private handleBulletCollision(sourceSprite: GameSprite, targetSprite: GameSprite, intersection:AxisAlignedBox) {
+  private handleBulletCollision(gl: WebGL2RenderingContext, sourceSprite: GameSprite, targetSprite: GameSprite, intersection:AxisAlignedBox) {
     if (targetSprite.tag === GameObjectType.Invader) {
       sourceSprite.isRemoved = true
       targetSprite.isRemoved = true
+      this.addParticleSet(new Explosion(gl, targetSprite))
     }
   }
 }

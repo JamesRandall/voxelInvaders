@@ -45,7 +45,7 @@ export async function mount<TModelType, TWorldObjectType>(resourceSpecification:
     else {
       let frameLength = (now - previousTime) / 1000
       previousTime = now
-      scene = scene.update(frameLength) ?? scene
+      scene = scene.update(gl!, frameLength) ?? scene
       setupGl(gl!)
       spriteRenderer.render(gl!, scene)
       particleRenderer.render(gl!, scene)

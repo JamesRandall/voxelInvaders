@@ -12,6 +12,7 @@ interface ParticleSetUniforms {
 }
 
 interface ParticleSetAttributes {
+  particlePosition: number,
   startingColor: number
   endingColor: number
   startingVelocity: number
@@ -29,6 +30,7 @@ export class VoxelParticleSetRenderer<TModelType, TWorldObjectType> extends Abst
       particleSetPosition: gl.getUniformLocation(_lightingModel.shaderProgram, "uParticleSetPosition")!
     }
     this._attributes = {
+      particlePosition: gl.getAttribLocation(_lightingModel.shaderProgram, "aParticlePosition"),
       startingColor: gl.getAttribLocation(_lightingModel.shaderProgram, "aStartingColor"),
       endingColor: gl.getAttribLocation(_lightingModel.shaderProgram, "aEndingColor"),
       startingVelocity: gl.getAttribLocation(_lightingModel.shaderProgram, "aStartingVelocity"),
@@ -50,10 +52,16 @@ export class VoxelParticleSetRenderer<TModelType, TWorldObjectType> extends Abst
     this.setVertexAttribute(gl, particleSet.normalsBuffer, this._lightingModel.programInfo.attributes.normal)
     this.setTextureAttribute(gl, particleSet.textureCoordinatesBuffer, this._lightingModel.programInfo.attributes.texCoord)
 
+    this.setInstancedVertexAttribute(gl, particleSet.startingPositionBuffer, this._attributes.particlePosition)
+    this.setInstancedVertexAttribute(gl, particleSet.startingVelocityBuffer, this._attributes.startingVelocity)
     this.setInstancedColorAttribute(gl, particleSet.startingColorBuffer, this._attributes.startingColor)
     this.setInstancedColorAttribute(gl, particleSet.endingColorBuffer, this._attributes.endingColor)
-    this.setInstancedVertexAttribute(gl, particleSet.startingVelocityBuffer, this._attributes.startingVelocity)
     this.setInstancedFloatAttribute(gl, particleSet.lifeBuffer, this._attributes.life)
+
+    //this.setColorAttribute(gl, particleSet.startingColorBuffer, this._attributes.startingColor)
+    //this.setColorAttribute(gl, particleSet.endingColorBuffer, this._attributes.endingColor)
+    //this.setVertexAttribute(gl, particleSet.startingVelocityBuffer, this._attributes.startingVelocity)
+    //this.setInstancedFloatAttribute(gl, particleSet.lifeBuffer, this._attributes.life)
   }
 
   private setUniforms(gl:WebGL2RenderingContext, scene:Scene<TModelType, TWorldObjectType>, projectionViewMatrix: mat4) {
@@ -84,7 +92,7 @@ export class VoxelParticleSetRenderer<TModelType, TWorldObjectType> extends Abst
       this.setAttributes(gl, particleSet)
 
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, particleSet.indicesBuffer)
-      gl.drawElements(gl.TRIANGLES, particleSet.vertexCount, gl.UNSIGNED_SHORT, 0)
+      //gl.drawElements(gl.TRIANGLES, particleSet.vertexCount, gl.UNSIGNED_SHORT, 0)
       gl.drawElementsInstanced(gl.TRIANGLES, particleSet.vertexCount, gl.UNSIGNED_SHORT, 0, particleSet.numberOfParticles)
     })
   }

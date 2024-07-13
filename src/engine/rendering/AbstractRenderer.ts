@@ -14,9 +14,9 @@ export abstract class AbstractRenderer<TModelType, TWorldObjectType> {
     numberOfComponents:number
   ) {
     if (position < 0) { return }
+    gl.enableVertexAttribArray(position)
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
     gl.vertexAttribPointer(position, numberOfComponents, type, false, 0, 0)
-    gl.enableVertexAttribArray(position)
   }
 
   protected setVertexAttribute(
@@ -24,6 +24,7 @@ export abstract class AbstractRenderer<TModelType, TWorldObjectType> {
     buffer: WebGLBuffer,
     position: number) {
     this.setAttribute(gl, buffer, position, gl.FLOAT, 3)
+    gl.vertexAttribDivisor(position, 0)
   }
 
   protected setInstancedVertexAttribute(
@@ -39,6 +40,7 @@ export abstract class AbstractRenderer<TModelType, TWorldObjectType> {
     buffer: WebGLBuffer,
     position: number) {
     this.setAttribute(gl, buffer, position, gl.FLOAT, 4)
+    gl.vertexAttribDivisor(position, 0)
   }
 
   protected setInstancedColorAttribute(
@@ -55,6 +57,7 @@ export abstract class AbstractRenderer<TModelType, TWorldObjectType> {
     position: number
   ) {
     this.setAttribute(gl, buffer, position, gl.FLOAT, 2)
+    gl.vertexAttribDivisor(position, 0)
   }
 
   protected setInstancedFloatAttribute(

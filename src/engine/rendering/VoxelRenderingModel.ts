@@ -2,6 +2,7 @@ import { VoxelModel } from "../models/VoxelModel"
 import { vec2, vec3 } from "gl-matrix"
 import { Voxel } from "../models/Voxel"
 import { VoxelRenderingGeometry } from "./VoxelRenderingGeometry"
+import { modelSpaceToWorldSpace } from "./coregl"
 
 export interface VoxelRenderingModel {
   vertices: WebGLBuffer
@@ -27,10 +28,7 @@ export function createVoxelRenderingModel<TModelType>(gl:WebGL2RenderingContext,
       for (let x = 0; x < source.width; x++) {
         let voxel = source.voxels[z][y][x]
         if (voxel !== null) {
-          const offset = vec3.fromValues(
-            x+0.5-source.width/2+0.002,
-            y+0.5-source.height/2+0.002,
-            -z+0.5-source.depth/2+0.002)
+          const offset = modelSpaceToWorldSpace(x, y, z, source.size)
           appendDataForVoxel(vertices, vertexColors, vertexNormals, textureCoordinates, indices, voxel, offset, indexOffset)
           indexOffset += VoxelRenderingGeometry.baseVertices.length
         }

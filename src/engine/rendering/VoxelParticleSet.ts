@@ -1,4 +1,4 @@
-import { VoxelParticle } from "./VoxelParticle"
+import { VoxelParticle } from "../models/VoxelParticle"
 import { VoxelRenderingGeometry } from "./VoxelRenderingGeometry"
 import { vec3 } from "gl-matrix"
 
@@ -25,13 +25,14 @@ export class VoxelParticleSet {
   constructor(gl: WebGL2RenderingContext, particles: VoxelParticle[], position:vec3) {
     const startingPositions: number[] = []
     const startingColors: number[] = []
+    const startingVelocities: number[] = []
+    const endingColors: number[] = []
+
     const vertices : number[] = VoxelRenderingGeometry.baseVertices.flatMap(v => [v[0], v[1], v[2]])
-    const indices : number[] = VoxelRenderingGeometry.baseIndices.map(i => i + 24)
+    const indices : number[] = VoxelRenderingGeometry.baseIndices.map(i => i)
     const normals : number[] = VoxelRenderingGeometry.baseNormals.flatMap(n => [n[0], n[1], n[2]])
     const textureCoordinates : number[] = VoxelRenderingGeometry.baseTextureCoordinates.flatMap(tc => [tc[0], tc[1]])
     const lives: number[] = particles.map(p => p.life)
-    const startingVelocities: number[] = []
-    const endingColors: number[] = []
 
     particles.forEach(particle => {
       startingPositions.push(particle.startingPosition[0])
@@ -90,5 +91,9 @@ export class VoxelParticleSet {
     this.elapsedTime = 0
     this.position = position
     this.numberOfParticles = particles.length
+  }
+
+  public update(frameLength: number) {
+    this.elapsedTime += frameLength
   }
 }

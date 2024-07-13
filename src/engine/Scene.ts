@@ -3,7 +3,7 @@ import { Camera } from "./Camera"
 import { RenderingModelProvider, ShaderProvider } from "./Resources"
 import { VoxelRenderer } from "./rendering/VoxelRenderer"
 import { AbstractRenderer } from "./rendering/AbstractRenderer"
-import { UniformLightingModel } from "./rendering/lightingModels/UniformLightingModel"
+import { ParticleUniformLightingModel, UniformLightingModel } from "./rendering/lightingModels/UniformLightingModel"
 import { CollisionHandler, Collisions } from "./Collisions"
 import { VoxelParticleSet } from "./rendering/VoxelParticleSet"
 import { VoxelParticleSetRenderer } from "./rendering/VoxelParticleSetRenderer"
@@ -55,13 +55,14 @@ export class Scene<TModelType, TWorldObjectType> {
     this._keyboardHandlers.push(handler)
   }
 
-  public update(frameLength: number) : Scene<TModelType,TWorldObjectType> | null {
+  public update(gl: WebGL2RenderingContext, frameLength: number) : Scene<TModelType,TWorldObjectType> | null {
     // When the game update loop is in progress we defer the addition and removal of sprites
     // this allows us to avoid modifying the array of sprites while it is being iterated over or taking
     // potentially expensive copies of the sprite array
+    this.updateParticleSets(frameLength)
     this.beginDeferredSpriteAdditions()
     this.updateSprites(frameLength)
-    this._collisions.evaluateCollisions(this.sprites)
+    this._collisions.evaluateCollisions(gl, this.sprites)
     this.removeSpritesMarkedForRemoval()
     this.endDeferredSpriteAdditions()
     return this
@@ -69,6 +70,10 @@ export class Scene<TModelType, TWorldObjectType> {
 
   protected updateSprites(frameLength: number) {
     this.sprites.forEach(sprite => sprite.update(frameLength))
+  }
+
+  protected updateParticleSets(frameLength: number) {
+    this.particleSets.forEach(particleSet => particleSet.update(frameLength))
   }
 
   public createSpriteRenderer(gl: WebGL2RenderingContext, shaders: ShaderProvider, renderingModels: RenderingModelProvider<TModelType>)  : AbstractRenderer<TModelType, TWorldObjectType> {
@@ -80,7 +85,7 @@ export class Scene<TModelType, TWorldObjectType> {
   }
 
   public createParticleRenderer(gl: WebGL2RenderingContext, shaders: ShaderProvider) : AbstractRenderer<TModelType, TWorldObjectType> {
-    const lightingModel = new UniformLightingModel(
+    const lightingModel = new ParticleUniformLightingModel(
       gl,
       shaders
     )

@@ -3,6 +3,7 @@ import { VoxelSprite } from "./models/VoxelSprite"
 import { vec3 } from "gl-matrix"
 
 export type CollisionHandler<TModelType, TWorldObjectType> = (
+  gl: WebGL2RenderingContext,
   a:VoxelSprite<TModelType,TWorldObjectType>,
   b:VoxelSprite<TModelType,TWorldObjectType>,
   intersection:AxisAlignedBox) => void
@@ -32,7 +33,7 @@ export class Collisions<TModelType, TWorldObjectType> {
     return AxisAlignedBox.intersection(boxA, boxB)
   }
 
-  public evaluateCollisions(sprites:ReadonlyArray<VoxelSprite<TModelType, TWorldObjectType>>) {
+  public evaluateCollisions(gl: WebGL2RenderingContext, sprites:ReadonlyArray<VoxelSprite<TModelType, TWorldObjectType>>) {
     if (this._collisionTypes.size === 0) { return }
     sprites.forEach(sprite => {
       if (sprite.tag === null || sprite.isRemoved) { return }
@@ -44,7 +45,7 @@ export class Collisions<TModelType, TWorldObjectType> {
         if (!handler) { return }
         const broadRangeIntersection = this.broadRangeIntersection(sprite, otherSprite)
         if (broadRangeIntersection) {
-          handler(sprite, otherSprite, broadRangeIntersection)
+          handler(gl, sprite, otherSprite, broadRangeIntersection)
         }
       })
     })
