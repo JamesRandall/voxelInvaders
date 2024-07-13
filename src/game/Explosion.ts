@@ -8,7 +8,7 @@ export class Explosion extends VoxelParticleSet {
   constructor(gl:WebGL2RenderingContext, sprite: GameSprite) {
     const model = sprite.currentFrame
     const particles:VoxelParticle[] = []
-    const maxInitialSpeedRange = 16
+    const maxInitialSpeedRange = 32
     const randomFactor = 16
     for (let z=0; z < model.depth; z++) {
       for (let y=0; y < model.height; y++) {

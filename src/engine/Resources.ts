@@ -55,14 +55,33 @@ export class Resources<TModelType> implements ShaderProvider, RenderingModelProv
   }
 }
 
+async function injectIncludes(source: string) {
+  const includeRegex = /^\/\/ INCLUDE:\s*(\S+)/gm;
+  const matches = [...source.matchAll(includeRegex)];
+  await Promise.all(
+    matches.map(async match => {
+      const includeName = match[1]
+      const includeResponse = await fetch(`shaders/includes/${includeName}`)
+      const includeText = await includeResponse.text()
+      source = source.replace(match[0], includeText)
+    })
+  )
+
+  return source
+}
+
 async function loadShaderSource(name: string) {
   const fragResponse = await fetch(`shaders/${name}.frag`)
   const vertResponse = await fetch(`shaders/${name}.vert`)
+
+  const frag = await injectIncludes(await fragResponse.text())
+  const vert = await injectIncludes(await vertResponse.text())
+
   return {
     name,
     shaderSource: {
-      frag: await fragResponse.text(),
-      vert: await vertResponse.text()
+      frag,
+      vert
     }
   }
 }

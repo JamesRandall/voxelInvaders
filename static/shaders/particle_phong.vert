@@ -21,11 +21,16 @@ out vec2 vTexCoord;
 out vec3 vWorldPosition;
 out vec3 vNormal;
 
+// INCLUDE: easings.glsl
+
 void main() {
-    vColor = aStartingColor + (aEndingColor - aStartingColor) * min((uTime/aLife),1.0);
+    float transitionTime = min((uTime/aLife),1.0);
+    float transition = easeOutQuad(transitionTime);
+    vColor = aStartingColor + (aEndingColor - aStartingColor) * transition;
     vTexCoord = aTexCoord;
-    vec3 instanceVertexPosition = aPosition + aParticlePosition + (aStartingVelocity*uTime);
+    vec3 instanceVertexPosition = aPosition + aParticlePosition + (aStartingVelocity*transition);
     vWorldPosition = (uTransformMatrix * vec4(instanceVertexPosition,1.0)).xyz;
     vNormal = aNormal;
     gl_Position =  uProjectionViewMatrix * uTransformMatrix * vec4(instanceVertexPosition,1.0);
 }
+
