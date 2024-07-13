@@ -1,6 +1,7 @@
 import { ResourceSpecification } from "./models/ResourceSpecification"
 import { Scene } from "./Scene"
 import { Resources } from "./Resources"
+import { setupGl } from "./rendering/coregl"
 
 require("../extensions.ts")
 
@@ -45,6 +46,7 @@ export async function mount<TModelType, TWorldObjectType>(resourceSpecification:
       let frameLength = (now - previousTime) / 1000
       previousTime = now
       scene = scene.update(frameLength) ?? scene
+      setupGl(gl!)
       spriteRenderer.render(gl!, scene)
       particleRenderer.render(gl!, scene)
     }

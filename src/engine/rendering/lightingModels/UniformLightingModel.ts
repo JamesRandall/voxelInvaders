@@ -4,14 +4,15 @@ import { ShaderProvider } from "../../Resources"
 import { CoreProgramInfo, getCoreAttributes, getCoreUniforms } from "../CoreProgramInfo"
 import { Camera } from "../../Camera"
 
-export class UniformLightingModel extends AbstractLightingModel {
+abstract class AbstractUniformLightingModel extends AbstractLightingModel {
   private _programInfo : CoreProgramInfo
 
-  constructor(
+  protected constructor(
     gl: WebGL2RenderingContext,
-    shaders: ShaderProvider
+    shaders: ShaderProvider,
+    shaderName: string
   ) {
-    super('uniform', shaders)
+    super(shaderName, shaders)
     this._programInfo = this.createProgramInfo(gl)
   }
 
@@ -34,5 +35,24 @@ export class UniformLightingModel extends AbstractLightingModel {
 
   public setUniforms(gl: WebGL2RenderingContext, camera: Camera, projectionViewMatrix: mat4): void {
 
+  }
+}
+
+export class UniformLightingModel extends AbstractUniformLightingModel {
+  constructor(
+    gl: WebGL2RenderingContext,
+    shaders: ShaderProvider
+  ) {
+    super(gl, shaders, 'voxel_uniform')
+  }
+}
+
+// TODO: When we've implemented the particle rendering, we'll look again at the lighting model abstractions
+export class ParticleUniformLightingModel extends AbstractUniformLightingModel {
+  constructor(
+    gl: WebGL2RenderingContext,
+    shaders: ShaderProvider
+  ) {
+    super(gl, shaders, 'particle_uniform')
   }
 }

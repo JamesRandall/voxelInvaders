@@ -11,7 +11,7 @@ export function getCoreUniforms(gl:WebGL2RenderingContext, shaderProgram:WebGLPr
   return {
     projectionViewMatrix: gl.getUniformLocation(shaderProgram, "uProjectionViewMatrix")!,
     showOutlines: gl.getUniformLocation(shaderProgram, "uShowOutline")!,
-    transformMatrix: gl.getUniformLocation(shaderProgram, "uTransformMatrix")!
+    transformMatrix: gl.getUniformLocation(shaderProgram, "uTransformMatrix")!,
   }
 }
 

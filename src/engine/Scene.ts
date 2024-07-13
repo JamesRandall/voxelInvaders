@@ -84,7 +84,7 @@ export class Scene<TModelType, TWorldObjectType> {
       gl,
       shaders
     )
-    return new VoxelParticleSetRenderer(lightingModel)
+    return new VoxelParticleSetRenderer(gl, lightingModel)
   }
 
   public addSprite(sprite:VoxelSprite<TModelType, TWorldObjectType>) {

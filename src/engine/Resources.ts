@@ -39,8 +39,8 @@ export class Resources<TModelType> implements ShaderProvider, RenderingModelProv
 
   static async load<TModelType>(gl: WebGL2RenderingContext, specification:ResourceSpecification<TModelType>) {
     const shaderNames = [
-      "phong",
-      "uniform"
+      "voxel_phong",
+      "voxel_uniform"
     ]
     const loadedShaderSource = await Promise.all(shaderNames.map(sn => loadShaderSource(sn)))
     const loadedModels = await Promise.all(specification.voxelModels.map(vn => loadVoxelModel(gl, vn)))

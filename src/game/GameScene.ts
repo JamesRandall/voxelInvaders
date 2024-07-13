@@ -10,6 +10,7 @@ import { MarchingInvaders } from "./MarchingInvaders"
 import { Shields } from "./Shields"
 import { GameSprite } from "./GameSprite"
 import { AxisAlignedBox } from "../engine/models/AxisAlignedBox"
+import { VoxelParticleSetRenderer } from "../engine/rendering/VoxelParticleSetRenderer"
 
 const maxSceneDepth = 90.0
 
@@ -55,11 +56,8 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
     return maxRotation*proportion*-1
   }
 
-  public override createSpriteRenderer(
-    gl: WebGL2RenderingContext,
-    shaders: ShaderProvider,
-    renderingModels: RenderingModelProvider<ModelType>)  : AbstractRenderer<ModelType, GameObjectType> {
-    const lightingModel = new PhongLightingModel(
+  private createLightingModel(gl: WebGL2RenderingContext, shaders: ShaderProvider,) {
+    return new PhongLightingModel(
       gl,
       shaders, {
         lightDirection: vec3.normalize(vec3.create(), [0.4,-0.4,0.4]),
@@ -67,14 +65,26 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
         diffuseLight: vec3.fromValues(0.6,0.6,0.6),
         specularLight: vec3.fromValues(0.5,0.5,0.5),
         shininess: 32.0
-      }
-    )
+      })
+  }
+
+  public override createSpriteRenderer(
+    gl: WebGL2RenderingContext,
+    shaders: ShaderProvider,
+    renderingModels: RenderingModelProvider<ModelType>)  : AbstractRenderer<ModelType, GameObjectType> {
+    const lightingModel = this.createLightingModel(gl, shaders)
     return new GameSceneRenderer(renderingModels, lightingModel, () => this.getRotation())
 
     // Just to illustrate the different lighting models
     //const uniformLightingModel = new UniformLightingModel(gl, shaders)
     //return new GameSceneRenderer(renderingModels, uniformLightingModel, () => this.getRotation())
   }
+
+  override createParticleRenderer(gl: WebGL2RenderingContext, shaders: ShaderProvider): AbstractRenderer<ModelType, GameObjectType> {
+    const lightingModel = this.createLightingModel(gl, shaders)
+    return super.createParticleRenderer(gl, shaders)
+  }
+
 
   override update(frameLength: number) {
     super.update(frameLength)

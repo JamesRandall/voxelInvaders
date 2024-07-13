@@ -16,8 +16,11 @@ export class VoxelParticleSet {
   startingColorBuffer: WebGLBuffer
   endingColorBuffer: WebGLBuffer
   lifeBuffer: WebGLBuffer
+
+  // These are handled as uniforms
   elapsedTime: number
   position: vec3
+  readonly numberOfParticles: number
 
   constructor(gl: WebGL2RenderingContext, particles: VoxelParticle[], position:vec3) {
     const startingPositions: number[] = []
@@ -86,5 +89,6 @@ export class VoxelParticleSet {
     this.vertexCount = indices.length
     this.elapsedTime = 0
     this.position = position
+    this.numberOfParticles = particles.length
   }
 }

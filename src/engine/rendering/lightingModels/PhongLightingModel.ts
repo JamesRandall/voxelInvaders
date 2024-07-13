@@ -15,13 +15,14 @@ interface PhongLightingProgramInfo extends CoreProgramInfo {
     lightSpecular: WebGLUniformLocation
     cameraPosition: WebGLUniformLocation
     shininess: WebGLUniformLocation
+    time: WebGLUniformLocation | null
   }
 }
 
-export class PhongLightingModel extends AbstractLightingModel {
-  private _programInfo : PhongLightingProgramInfo
+abstract class AbstractPhongLightingModel extends AbstractLightingModel {
+  private readonly _programInfo : PhongLightingProgramInfo
 
-  constructor(
+  protected constructor(
     gl: WebGL2RenderingContext,
     shaders: ShaderProvider,
     public options: {
@@ -30,9 +31,10 @@ export class PhongLightingModel extends AbstractLightingModel {
       diffuseLight: vec3
       specularLight: vec3
       shininess: number
-    }
+    },
+    shaderName: string
   ) {
-    super('phong', shaders)
+    super(shaderName, shaders)
     this._programInfo = this.createProgramInfo(gl)
   }
 
@@ -52,6 +54,7 @@ export class PhongLightingModel extends AbstractLightingModel {
         lightSpecular: gl.getUniformLocation(this.shaderProgram, "uLightSpecular")!,
         cameraPosition: gl.getUniformLocation(this.shaderProgram, "uCameraPosition")!,
         shininess: gl.getUniformLocation(this.shaderProgram, "uShininess")!,
+        time: gl.getUniformLocation(this.shaderProgram, "uTime"),
       }
     }
   }
@@ -67,5 +70,37 @@ export class PhongLightingModel extends AbstractLightingModel {
     gl.uniform3fv(this._programInfo.uniforms.lightDiffuse, this.options.diffuseLight)
     gl.uniform3fv(this._programInfo.uniforms.lightSpecular, this.options.specularLight)
     gl.uniform3fv(this._programInfo.uniforms.cameraPosition, camera.position)
+  }
+}
+
+export class PhongLightingModel extends AbstractPhongLightingModel {
+  constructor(
+    gl: WebGL2RenderingContext,
+    shaders: ShaderProvider,
+    public options: {
+      lightDirection: vec3
+      ambientLight: vec3
+      diffuseLight: vec3
+      specularLight: vec3
+      shininess: number
+    }
+  ) {
+    super(gl, shaders, options, 'voxel_phong')
+  }
+}
+
+export class ParticlePhongLightingModel extends AbstractPhongLightingModel {
+  constructor(
+    gl: WebGL2RenderingContext,
+    shaders: ShaderProvider,
+    public options: {
+      lightDirection: vec3
+      ambientLight: vec3
+      diffuseLight: vec3
+      specularLight: vec3
+      shininess: number
+    }
+  ) {
+    super(gl, shaders, options, 'particle_phong')
   }
 }
