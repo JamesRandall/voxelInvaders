@@ -22,7 +22,7 @@ out vec3 vWorldPosition;
 out vec3 vNormal;
 
 void main() {
-    vColor = aStartingColor;
+    vColor = aStartingColor + (aEndingColor - aStartingColor) * min((uTime/aLife),1.0);
     vTexCoord = aTexCoord;
     vec3 instanceVertexPosition = aPosition + aParticlePosition + (aStartingVelocity*uTime);
     vWorldPosition = (uTransformMatrix * vec4(instanceVertexPosition,1.0)).xyz;

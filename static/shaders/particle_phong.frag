@@ -41,6 +41,6 @@ void main() {
         }
     }
     vec3 lightAdjustedColor = phongLighting(vWorldPosition, color, vNormal, uCameraPosition);
-    outColor = vec4(lightAdjustedColor,1.0);
+    outColor = vec4(lightAdjustedColor,vColor.a);
 }
 

@@ -74,6 +74,7 @@ export class Scene<TModelType, TWorldObjectType> {
 
   protected updateParticleSets(frameLength: number) {
     this.particleSets.forEach(particleSet => particleSet.update(frameLength))
+    this._particleSets = this._particleSets.filter(ps => ps.elapsedTime <= ps.maxLife)
   }
 
   public createSpriteRenderer(gl: WebGL2RenderingContext, shaders: ShaderProvider, renderingModels: RenderingModelProvider<TModelType>)  : AbstractRenderer<TModelType, TWorldObjectType> {

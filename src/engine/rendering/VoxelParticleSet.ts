@@ -21,6 +21,7 @@ export class VoxelParticleSet {
   elapsedTime: number
   position: vec3
   readonly numberOfParticles: number
+  readonly maxLife: number
 
   constructor(gl: WebGL2RenderingContext, particles: VoxelParticle[], position:vec3) {
     const startingPositions: number[] = []
@@ -91,6 +92,7 @@ export class VoxelParticleSet {
     this.elapsedTime = 0
     this.position = position
     this.numberOfParticles = particles.length
+    this.maxLife = Math.max(...lives)
   }
 
   public update(frameLength: number) {
