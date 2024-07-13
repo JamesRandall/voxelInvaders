@@ -5,6 +5,8 @@ import { VoxelRenderer } from "./rendering/VoxelRenderer"
 import { AbstractRenderer } from "./rendering/AbstractRenderer"
 import { UniformLightingModel } from "./rendering/lightingModels/UniformLightingModel"
 import { CollisionHandler, Collisions } from "./Collisions"
+import { VoxelParticleSet } from "./rendering/VoxelParticleSet"
+import { VoxelParticleSetRenderer } from "./rendering/VoxelParticleSetRenderer"
 
 export interface KeyboardHandler {
   processKeyboardInput(key: string, isPressed: boolean) : void
@@ -16,6 +18,7 @@ export class Scene<TModelType, TWorldObjectType> {
 
   private _sprites : VoxelSprite<TModelType, TWorldObjectType>[] = []
   private _deferredSpriteAdditions : VoxelSprite<TModelType, TWorldObjectType>[]|null = null
+  private _particleSets: VoxelParticleSet[] = []
 
   public view = {
     camera: Camera.default(),
@@ -29,6 +32,8 @@ export class Scene<TModelType, TWorldObjectType> {
   }
 
   public get sprites() : ReadonlyArray<VoxelSprite<TModelType, TWorldObjectType>> { return this._sprites }
+
+  public get particleSets() : ReadonlyArray<VoxelParticleSet> { return this._particleSets }
 
   private keyDown(e: KeyboardEvent) {
     this._keyboardHandlers.forEach(h => h.processKeyboardInput(e.key, true))
@@ -66,12 +71,20 @@ export class Scene<TModelType, TWorldObjectType> {
     this.sprites.forEach(sprite => sprite.update(frameLength))
   }
 
-  public createRenderer(gl: WebGL2RenderingContext, shaders: ShaderProvider, renderingModels: RenderingModelProvider<TModelType>)  : AbstractRenderer<TModelType, TWorldObjectType> {
+  public createSpriteRenderer(gl: WebGL2RenderingContext, shaders: ShaderProvider, renderingModels: RenderingModelProvider<TModelType>)  : AbstractRenderer<TModelType, TWorldObjectType> {
     const lightingModel = new UniformLightingModel(
       gl,
       shaders
     )
     return new VoxelRenderer(renderingModels, lightingModel)
+  }
+
+  public createParticleRenderer(gl: WebGL2RenderingContext, shaders: ShaderProvider) : AbstractRenderer<TModelType, TWorldObjectType> {
+    const lightingModel = new UniformLightingModel(
+      gl,
+      shaders
+    )
+    return new VoxelParticleSetRenderer(lightingModel)
   }
 
   public addSprite(sprite:VoxelSprite<TModelType, TWorldObjectType>) {
@@ -80,6 +93,10 @@ export class Scene<TModelType, TWorldObjectType> {
     } else {
       this._sprites.push(sprite)
     }
+  }
+
+  public addParticleSet(particleSet: VoxelParticleSet) {
+    this._particleSets.push(particleSet)
   }
 
   public beginDeferredSpriteAdditions() {

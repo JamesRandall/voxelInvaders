@@ -52,10 +52,10 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
   private getRotation() {
     const maxRotation = 0.4
     const proportion = this._player.position[0]/(this._marchingInvaders.totalInvaderRowWidth/2.0)
-    return maxRotation*proportion
+    return maxRotation*proportion*-1
   }
 
-  public override createRenderer(
+  public override createSpriteRenderer(
     gl: WebGL2RenderingContext,
     shaders: ShaderProvider,
     renderingModels: RenderingModelProvider<ModelType>)  : AbstractRenderer<ModelType, GameObjectType> {

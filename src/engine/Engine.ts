@@ -32,7 +32,8 @@ export async function mount<TModelType, TWorldObjectType>(resourceSpecification:
       scene.resize()
     }, 100)
   })
-  const renderer = scene.createRenderer(gl, resources, resources)
+  const spriteRenderer = scene.createSpriteRenderer(gl, resources, resources)
+  const particleRenderer = scene.createParticleRenderer(gl, resources)
 
   let previousTime : number|null = null
   function render(now: number) {
@@ -44,7 +45,8 @@ export async function mount<TModelType, TWorldObjectType>(resourceSpecification:
       let frameLength = (now - previousTime) / 1000
       previousTime = now
       scene = scene.update(frameLength) ?? scene
-      renderer.render(gl!, scene)
+      spriteRenderer.render(gl!, scene)
+      particleRenderer.render(gl!, scene)
     }
 
     requestAnimationFrame(render)
