@@ -4,7 +4,13 @@ import { vec3 } from "gl-matrix"
 export class VoxelModel<TModelType> {
   public readonly size:vec3
 
-  constructor(public type: TModelType, public readonly width:number, public readonly height:number, public readonly depth:number, public voxels:(Voxel|null)[][][]) {
+  constructor(
+    public type: TModelType,
+    public readonly width:number,
+    public readonly height:number,
+    public readonly depth:number,
+    public voxels:(Voxel|null)[][][] // TODO: make this a readonly public
+  ) {
     this.size = vec3.fromValues(width, height, depth)
   }
 
@@ -14,4 +20,6 @@ export class VoxelModel<TModelType> {
     )
     return new VoxelModel<TModelType>(src.type, src.width, src.height, src.depth, copiedVoxels)
   }
+
+
 }

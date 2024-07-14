@@ -7,7 +7,8 @@ export class WorldObject<TWorldObjectType> {
   public velocity = vec3.fromValues(0,0,0)
   public positionConstraint : AxisAlignedBox|null = null
   private _unitMovementDelta = vec3.fromValues(0,0,0)
-  public tag:TWorldObjectType|null = null
+  public type:TWorldObjectType|null = null
+  public tag:string|null = null
 
   constructor(private _position:vec3, private readonly _unitBasedMovement:boolean=true) { }
 

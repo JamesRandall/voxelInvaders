@@ -5,6 +5,7 @@ in vec3 vWorldPosition;
 in vec4 vColor;
 in vec2 vTexCoord;
 in vec3 vNormal;
+in float vVisible;
 uniform vec3 uLightDirection;
 uniform vec3 uLightAmbient;
 uniform vec3 uLightDiffuse;
@@ -32,6 +33,9 @@ vec3 phongLighting(vec3 worldPosition, vec3 diffuseColor, vec3 normal, vec3 view
 }
 
 void main() {
+    if (vVisible < 0.5) {
+        discard;
+    }
     const float tolerance = 0.1;
     vec3 color = vColor.rgb;
     if (uShowOutline > 0.0) {

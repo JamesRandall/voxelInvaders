@@ -60,6 +60,14 @@ export abstract class AbstractRenderer<TModelType, TWorldObjectType> {
     gl.vertexAttribDivisor(position, 0)
   }
 
+  protected setFloatAttribute(
+    gl: WebGL2RenderingContext,
+    buffer: WebGLBuffer,
+    position: number) {
+    this.setAttribute(gl, buffer, position, gl.FLOAT, 1)
+    gl.vertexAttribDivisor(position, 0)
+  }
+
   protected setInstancedFloatAttribute(
     gl: WebGL2RenderingContext,
     buffer: WebGLBuffer,

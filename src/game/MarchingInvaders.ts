@@ -29,7 +29,7 @@ export class MarchingInvaders {
           [invaderModel],
           [spriteX,spriteY,0]
         )
-        invader.tag = GameObjectType.Invader
+        invader.type = GameObjectType.Invader
         invader.velocity = vec3.fromValues(startingInvaderSpeed,0,0)
         scene.addSprite(invader)
       }
@@ -43,7 +43,7 @@ export class MarchingInvaders {
     if ((this._invaderSpeed > 0 && referenceX > this._maxInvaderMovement) || (this._invaderSpeed < 0 && referenceX < -this._maxInvaderMovement)) {
       this._invaderSpeed = (this._invaderSpeed > 0 ? -invaderSpeedChange : invaderSpeedChange) + -this._invaderSpeed
       scene.sprites.forEach(sprite => {
-        if (sprite.tag === GameObjectType.Invader) {
+        if (sprite.type === GameObjectType.Invader) {
           sprite.velocity = vec3.fromValues(this._invaderSpeed,0,0)
           sprite.moveBy([0,-1,0])
         }

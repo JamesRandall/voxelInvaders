@@ -33,6 +33,7 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
   private _shields:Shields
 
   constructor(
+    gl: WebGL2RenderingContext,
     public readonly resources:Resources<ModelType>)
   {
     super()
@@ -42,7 +43,7 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
 
     this._player = new Player(this)
     this._marchingInvaders = new MarchingInvaders(this)
-    this._shields = new Shields(this, this._marchingInvaders.totalInvaderRowWidth)
+    this._shields = new Shields(gl, this, this._marchingInvaders.totalInvaderRowWidth)
 
     // constrain the player to the space taken up by the marching invaders
     this._player.sprite.positionConstraint = {
@@ -112,10 +113,13 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
   }
 
   private handleBulletCollision(gl: WebGL2RenderingContext, sourceSprite: GameSprite, targetSprite: GameSprite, intersection:AxisAlignedBox) {
-    if (targetSprite.tag === GameObjectType.Invader) {
+    if (targetSprite.type === GameObjectType.Invader) {
       sourceSprite.isRemoved = true
       targetSprite.isRemoved = true
       this.addParticleSet(new Explosion(gl, targetSprite))
+    } else if (targetSprite.type === GameObjectType.Shield) {
+      sourceSprite.isRemoved = true
+      this._shields.handleBulletCollision(gl, this, targetSprite, intersection)
     }
   }
 }

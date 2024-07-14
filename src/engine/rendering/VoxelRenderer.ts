@@ -9,6 +9,7 @@ import { AbstractLightingModel } from "./lightingModels/AbstractLightingModel"
 
 export class VoxelRenderer<TModelType,TWorldObjectType> extends AbstractRenderer<TModelType, TWorldObjectType> {
   private _renderingModels : RenderingModelProvider<TModelType>
+  private _visibleAttribute = -1
 
   constructor(renderingModels: RenderingModelProvider<TModelType>, private _lightingModel: AbstractLightingModel) {
     super()
@@ -17,6 +18,10 @@ export class VoxelRenderer<TModelType,TWorldObjectType> extends AbstractRenderer
 
   private setAttributes(gl: WebGL2RenderingContext, model: VoxelRenderingModel) {
     this._lightingModel.setAttributes(gl)
+    if (this._visibleAttribute === -1) {
+      this._visibleAttribute = gl.getAttribLocation(this._lightingModel.shaderProgram, "aVisible")
+    }
+    this.setFloatAttribute(gl, model.visible, this._visibleAttribute)
     this.setVertexAttribute(gl, model.vertices, this._lightingModel.programInfo.attributes.position)
     this.setVertexAttribute(gl, model.normals, this._lightingModel.programInfo.attributes.normal)
     this.setColorAttribute(gl, model.colors, this._lightingModel.programInfo.attributes.color)
@@ -47,7 +52,7 @@ export class VoxelRenderer<TModelType,TWorldObjectType> extends AbstractRenderer
 
     scene.sprites.forEach(sprite => {
       const model = sprite.currentFrame
-      const renderingModel = this._renderingModels.getRenderingModel(model.type)
+      const renderingModel = sprite.currentRenderModel ?? this._renderingModels.getRenderingModel(model.type)
       if (!renderingModel) { return }
       const translateMatrix = mat4.translate(mat4.create(), mat4.create(), sprite.position)
       const preTranslateRotateMatrix = this.getPreTranslateRotationMatrix(sprite)

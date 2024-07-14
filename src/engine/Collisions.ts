@@ -71,12 +71,12 @@ export class Collisions<TModelType, TWorldObjectType> {
   public evaluateCollisions(gl: WebGL2RenderingContext, sprites:ReadonlyArray<VoxelSprite<TModelType, TWorldObjectType>>) {
     if (this._collisionTypes.size === 0) { return }
     sprites.forEach(sprite => {
-      if (sprite.tag === null || sprite.isRemoved) { return }
-      const collisionType = this._collisionTypes.get(sprite.tag)
+      if (sprite.type === null || sprite.isRemoved) { return }
+      const collisionType = this._collisionTypes.get(sprite.type)
       if (!collisionType) { return }
       sprites.forEach(otherSprite => {
-        if (otherSprite.tag === null || sprite.isRemoved) { return }
-        const handler = collisionType.get(otherSprite.tag)
+        if (otherSprite.type === null || sprite.isRemoved) { return }
+        const handler = collisionType.get(otherSprite.type)
         if (!handler) { return }
         const broadRangeIntersection = this.broadRangeIntersection(sprite, otherSprite)
         if (broadRangeIntersection) {

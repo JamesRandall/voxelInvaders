@@ -10,6 +10,7 @@ export interface VoxelRenderingModel {
   normals: WebGLBuffer
   textureCoordinates: WebGLBuffer
   indices: WebGLBuffer
+  visible: WebGLBuffer
   vertexCount: number
 }
 
@@ -21,6 +22,7 @@ export function createVoxelRenderingModel<TModelType>(gl:WebGL2RenderingContext,
   const vertexColors: number[] = []
   const vertexNormals: number[] = []
   const textureCoordinates: number[] = []
+  const visible: number[] = []
   let indexOffset = 0
 
   for(let z=0; z < source.depth; z++) {
@@ -29,7 +31,7 @@ export function createVoxelRenderingModel<TModelType>(gl:WebGL2RenderingContext,
         let voxel = source.voxels[z][y][x]
         if (voxel !== null) {
           const offset = modelSpaceToWorldSpace(x, y, z, source.size)
-          appendDataForVoxel(vertices, vertexColors, vertexNormals, textureCoordinates, indices, voxel, offset, indexOffset)
+          appendDataForVoxel(vertices, vertexColors, vertexNormals, textureCoordinates, visible, indices, voxel, offset, indexOffset)
           indexOffset += VoxelRenderingGeometry.baseVertices.length
         }
       }
@@ -52,6 +54,10 @@ export function createVoxelRenderingModel<TModelType>(gl:WebGL2RenderingContext,
   gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordinateBuffer)
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates), gl.STATIC_DRAW)
 
+  const visibleBuffer = gl.createBuffer()
+  gl.bindBuffer(gl.ARRAY_BUFFER, visibleBuffer)
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(visible), gl.STATIC_DRAW)
+
   const indexBuffer = gl.createBuffer()
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW)
@@ -61,6 +67,7 @@ export function createVoxelRenderingModel<TModelType>(gl:WebGL2RenderingContext,
     colors: colorBuffer!,
     normals: normalBuffer!,
     textureCoordinates: textureCoordinateBuffer!,
+    visible: visibleBuffer!,
     indices: indexBuffer!,
     vertexCount: indices.length
   }
@@ -71,6 +78,7 @@ function appendDataForVoxel(
   vertexColors:number[],
   vertexNormals: number[],
   textureCoordinates:number[],
+  visible: number[],
   indices: number[],
   voxel:Voxel,
   offset:vec3,
@@ -86,6 +94,8 @@ function appendDataForVoxel(
     vertexColors.push(voxel.color.g)
     vertexColors.push(voxel.color.b)
     vertexColors.push(voxel.color.a)
+
+    visible.push(1)
   })
   VoxelRenderingGeometry.baseNormals.forEach(n => {
     vertexNormals.push(n[0])

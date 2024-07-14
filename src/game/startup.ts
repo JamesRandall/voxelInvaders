@@ -29,4 +29,4 @@ function createBullet() {
     { type: ModelType.Shield, source: "shield" },
     { type: ModelType.Bullet, source: createBullet() },
   ]
-}, (_,resources) => new GameScene(resources)))()
+}, (gl,resources) => new GameScene(gl, resources)))()

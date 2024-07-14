@@ -3,7 +3,7 @@ export function getCoreAttributes(gl:WebGL2RenderingContext, shaderProgram:WebGL
     position: gl.getAttribLocation(shaderProgram, "aPosition"),
     color: gl.getAttribLocation(shaderProgram, "aColor"),
     normal: gl.getAttribLocation(shaderProgram, "aNormal"),
-    texCoord: gl.getAttribLocation(shaderProgram, "aTexCoord"),
+    texCoord: gl.getAttribLocation(shaderProgram, "aTexCoord")
   }
 }
 

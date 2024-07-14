@@ -48,7 +48,7 @@ export class Player implements KeyboardHandler {
       vec3.copy(vec3.create(),this.position)
     )
     this._bullet.velocity = vec3.fromValues(0,150,0)
-    this._bullet.tag = GameObjectType.Bullet
+    this._bullet.type = GameObjectType.Bullet
     scene.addSprite(this._bullet)
   }
 
