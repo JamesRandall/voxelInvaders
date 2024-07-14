@@ -6,6 +6,7 @@ import { WorldObject } from "../engine/models/WorldObject"
 
 const startingInvaderSpeed = 4.0
 const invaderSpeedChange = 1.0
+export const invaderTopRowY = 65
 
 export class MarchingInvaders {
   private _invaderSpeed = startingInvaderSpeed
@@ -21,7 +22,7 @@ export class MarchingInvaders {
     this._maxInvaderMovement = Math.ceil((invaderModel.width+invaderSpacing)*1.75)
 
     for(let y=0; y < 5; y++) {
-      const spriteY = 65 - (y * (invaderModel.height+invaderSpacing))
+      const spriteY = invaderTopRowY - (y * (invaderModel.height+invaderSpacing))
       for(let x=0; x< invadersAcross; x++) {
         const spriteX = this.totalInvaderRowWidth/2 - (x * (invaderModel.width+invaderSpacing))
         const invader = new GameSprite(

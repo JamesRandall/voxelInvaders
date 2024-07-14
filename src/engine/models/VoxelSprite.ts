@@ -37,9 +37,9 @@ export class VoxelSprite<TModelType, TWorldObjectType> extends WorldObject<TWorl
   private updateAnimationFrame(frameLength:number) {
     if (this._animationFrameDuration === null) return
     this._timeToNextFrame -= frameLength
-    if (this._timeToNextFrame < 0) {
+    if (this._timeToNextFrame <= 0) {
       this._timeToNextFrame += this._animationFrameDuration
-      if (this._timeToNextFrame < 0) {
+      if (this._timeToNextFrame <= 0) {
         this._timeToNextFrame = this._animationFrameDuration
       }
       this._currentFrameIndex++
@@ -54,7 +54,7 @@ export class VoxelSprite<TModelType, TWorldObjectType> extends WorldObject<TWorl
 
     // TODO: we need to make sure this rounding is consistent with positioning on odd numbered dimensions
     const minCoords = vec3.ceil(vec3.create(), vec3.subtract(vec3.create(), this.position, halfSize))
-    const maxCoords = vec3.ceil(vec3.create(), vec3.add(vec3.create(), this.position, halfSize))
+    const maxCoords = vec3.floor(vec3.create(), vec3.add(vec3.create(), this.position, halfSize))
 
     return new AxisAlignedBox(minCoords, maxCoords);
   }

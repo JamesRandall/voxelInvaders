@@ -4,12 +4,13 @@ import { KeyboardHandler } from "../engine/Scene"
 import { ModelType } from "./startup"
 import { vec3 } from "gl-matrix"
 import { GameObjectType, GameScene } from "./GameScene"
+import { invaderTopRowY } from "./MarchingInvaders"
 
 const playerSpeed = 64.0
 
 export class Player implements KeyboardHandler {
   private _controlState = startingControlState()
-  private _repeatFireTimer : number|null = null
+  private _bullet : GameSprite|null = null
   public sprite:GameSprite
 
   constructor(scene:GameScene) {
@@ -40,14 +41,15 @@ export class Player implements KeyboardHandler {
   }
 
   private fireBullet(scene:GameScene) {
-    this._repeatFireTimer = 0.5
-    const bullet = new GameSprite(
+    if (this._bullet !== null && this._bullet.isRemoved) { this._bullet = null }
+    if (this._bullet !== null) { return }
+    this._bullet = new GameSprite(
       [scene.resources.getModel(ModelType.Bullet)!],
       vec3.copy(vec3.create(),this.position)
     )
-    bullet.velocity = vec3.fromValues(0,150,0)
-    bullet.tag = GameObjectType.Bullet
-    scene.addSprite(bullet)
+    this._bullet.velocity = vec3.fromValues(0,150,0)
+    this._bullet.tag = GameObjectType.Bullet
+    scene.addSprite(this._bullet)
   }
 
   public applyControlState(scene:GameScene) {
@@ -59,12 +61,17 @@ export class Player implements KeyboardHandler {
     else { this.sprite.velocity = [0,0,0] }
 
     if (this._controlState.current.firePressed && !this._controlState.previous.firePressed) {
-      console.log("Fire")
       this.fireBullet(scene)
-    } else if (!this._controlState.current.firePressed && this._controlState.previous.firePressed) {
-      //stopFiring()
     }
 
     this._controlState.previous = { ...this._controlState.current }
+  }
+
+  public removeBulletIfOutOfBounds() {
+    if (this._bullet === null) return
+    if (this._bullet.position[1] > invaderTopRowY+5) {
+      this._bullet.isRemoved = true
+      this._bullet = null
+    }
   }
 }

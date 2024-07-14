@@ -107,6 +107,7 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
     super.update(gl, frameLength)
     this._marchingInvaders.updateInvaders(this, frameLength)
     this._player.applyControlState(this)
+    this._player.removeBulletIfOutOfBounds()
     return this
   }
 
