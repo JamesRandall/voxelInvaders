@@ -3,10 +3,11 @@ import { GameSprite } from "./GameSprite"
 import { VoxelParticle } from "../engine/models/VoxelParticle"
 import { vec3, vec4 } from "gl-matrix"
 import { modelSpaceToWorldSpace } from "../engine/rendering/coregl"
+import { VoxelModel } from "../engine/models/VoxelModel"
+import { ModelType } from "./startup"
 
 export class Explosion extends VoxelParticleSet {
-  constructor(gl:WebGL2RenderingContext, sprite: GameSprite) {
-    const model = sprite.currentFrame
+  constructor(gl:WebGL2RenderingContext, model: VoxelModel<ModelType>, position: vec3) {
     const particles:VoxelParticle[] = []
     const maxInitialSpeedRange = 32
     const randomFactor = 16
@@ -28,6 +29,14 @@ export class Explosion extends VoxelParticleSet {
         }
       }
     }
-    super(gl, particles, sprite.position)
+    super(gl, particles, position)
+  }
+
+  public static createFromSprite(gl:WebGL2RenderingContext, sprite: GameSprite) {
+    return new Explosion(gl, sprite.currentFrame, sprite.position)
+  }
+
+  public static createFromModel(gl:WebGL2RenderingContext, model: VoxelModel<ModelType>, position:vec3) {
+    return new Explosion(gl, model, position)
   }
 }

@@ -46,7 +46,7 @@ export class Player implements KeyboardHandler {
     if (this._bullet !== null && this._bullet.isRemoved) { this._bullet = null }
     if (this._bullet !== null) { return }
     this._bullet = new GameSprite(
-      [scene.resources.getModel(ModelType.Bullet)!],
+      [scene.resources.getModel(ModelType.PlayerBullet)!],
       vec3.copy(vec3.create(),[
         this.position[0] + Math.floor(this.sprite.currentFrame.width/2),
         this.sprite.getBoundingBox().max[1]+1,0]) // place the bullet above the player

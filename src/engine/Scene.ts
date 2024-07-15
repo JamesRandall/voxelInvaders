@@ -58,7 +58,6 @@ export class Scene<TModelType, TWorldObjectType> {
   }
 
   public update(gl: WebGL2RenderingContext, frameLength: number) : Scene<TModelType,TWorldObjectType> | null {
-    let loopCount = 0
     const refreshRate = this.physicsRefreshRate ?? frameLength
     while(frameLength > 0) {
       const updateFrameLength = Math.min(frameLength,refreshRate)
@@ -72,7 +71,6 @@ export class Scene<TModelType, TWorldObjectType> {
       this.removeSpritesMarkedForRemoval()
       this.endDeferredSpriteAdditions()
       frameLength -= refreshRate
-      console.log("Loop count: ", loopCount++)
     }
     return this
   }

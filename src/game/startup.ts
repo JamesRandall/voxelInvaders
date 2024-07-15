@@ -1,40 +1,24 @@
 import { mount } from "../engine/Engine"
 import { GameScene } from "./GameScene"
 import { VoxelModel } from "../engine/models/VoxelModel"
-import { Voxel } from "../engine/models/Voxel"
 import { VoxelColor } from "../engine/models/VoxelColor"
 
 export enum ModelType {
   InvaderFrame1,
   InvaderFrame2,
   Player,
-  Bullet,
-  Shield
+  PlayerBullet,
+  InvaderBullet,
+  Shield,
+  ShieldExplostion,
 }
 
-function createBullet() {
-  return new VoxelModel(ModelType.Bullet, 1, 1, 4, [
-    [
-      [
-        new Voxel(new VoxelColor(1,1,1,1)),
-      ]
-    ],
-    [
-      [
-        new Voxel(new VoxelColor(1,1,1,1)),
-      ]
-    ],
-    [
-      [
-        new Voxel(new VoxelColor(1,1,1,1)),
-      ]
-    ],
-    [
-      [
-        new Voxel(new VoxelColor(1,1,1,1)),
-      ]
-    ]
-  ])
+function createPlayerBullet() {
+  return VoxelModel.fill(ModelType.PlayerBullet, 1, 1, 4, new VoxelColor(1,1,1,1))
+}
+
+function createInvaderBullet() {
+  return VoxelModel.fill(ModelType.InvaderBullet, 1, 4, 4, new VoxelColor(1,0,0,1))
 }
 
 (async () => await mount({
@@ -42,6 +26,7 @@ function createBullet() {
     { type: ModelType.InvaderFrame1, source: "invader1" },
     { type: ModelType.Player, source: "player" },
     { type: ModelType.Shield, source: "shield" },
-    { type: ModelType.Bullet, source: createBullet() },
+    { type: ModelType.PlayerBullet, source: createPlayerBullet() },
+    { type: ModelType.InvaderBullet, source: createInvaderBullet() },
   ]
 }, (gl,resources) => new GameScene(gl, resources)))()

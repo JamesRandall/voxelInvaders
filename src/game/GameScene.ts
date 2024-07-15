@@ -17,6 +17,7 @@ const maxSceneDepth = 90.0
 
 export enum GameObjectType {
   Bullet,
+  InvaderBullet,
   Shield,
   Player,
   Invader
@@ -52,8 +53,14 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
 
     this.registerCollisionType(
       GameObjectType.Bullet,
-      [GameObjectType.Invader, GameObjectType.Shield, GameObjectType.Player],
+      [GameObjectType.Invader, GameObjectType.Shield,],
       this.handleBulletCollision.bind(this)
+    )
+
+    this.registerCollisionType(
+      GameObjectType.InvaderBullet,
+      [GameObjectType.Shield, GameObjectType.Player],
+      this.handleInvaderBulletCollision.bind(this)
     )
   }
 
@@ -101,7 +108,6 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
     return new GameVoxelParticleSetRenderer(gl, lightingModel, this.getRotation.bind(this))
   }
 
-
   override update(gl: WebGL2RenderingContext, frameLength: number) {
     super.update(gl, frameLength)
     this._marchingInvaders.updateInvaders(this, frameLength)
@@ -111,13 +117,18 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
   }
 
   private handleBulletCollision(gl: WebGL2RenderingContext, sourceSprite: GameSprite, targetSprite: GameSprite, intersection:AxisAlignedBox) {
+    sourceSprite.isRemoved = true
     if (targetSprite.type === GameObjectType.Invader) {
-      sourceSprite.isRemoved = true
-      targetSprite.isRemoved = true
-      this.addParticleSet(new Explosion(gl, targetSprite))
+      this._marchingInvaders.handleInvaderHitByBullet(gl, this, targetSprite)
     } else if (targetSprite.type === GameObjectType.Shield) {
+      this._shields.handlePlayerBulletCollision(gl, this, targetSprite, intersection)
+    }
+  }
+
+  private handleInvaderBulletCollision(gl: WebGL2RenderingContext, sourceSprite: GameSprite, targetSprite: GameSprite, intersection:AxisAlignedBox) {
+    if (targetSprite.type === GameObjectType.Shield) {
+      this._shields.handleInvaderBulletCollision(gl, this, targetSprite, intersection)
       sourceSprite.isRemoved = true
-      this._shields.handleBulletCollision(gl, this, targetSprite, intersection)
     }
   }
 }
