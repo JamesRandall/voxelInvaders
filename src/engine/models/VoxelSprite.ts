@@ -73,11 +73,8 @@ export class VoxelSprite<TModelType, TWorldObjectType> extends WorldObject<TWorl
   }
 
   public getBoundingBox(): AxisAlignedBox {
-    const halfSize = vec3.div(vec3.create(), this.currentFrame.size, [2,2,2])
-
-    // TODO: we need to make sure this rounding is consistent with positioning on odd numbered dimensions
-    const minCoords = vec3.ceil(vec3.create(), vec3.subtract(vec3.create(), this.position, halfSize))
-    const maxCoords = vec3.floor(vec3.create(), vec3.add(vec3.create(), this.position, halfSize))
+    const minCoords = vec3.copy(vec3.create(), this.position)
+    const maxCoords = vec3.sub(vec3.create(),vec3.add(vec3.create(), minCoords, this.currentFrame.size), [1,1,1])
 
     return new AxisAlignedBox(minCoords, maxCoords);
   }

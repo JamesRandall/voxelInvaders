@@ -15,9 +15,10 @@ export class Player implements KeyboardHandler {
   public sprite:GameSprite
 
   constructor(scene:GameScene) {
+    const model = scene.resources.getModel(ModelType.Player)!
     this.sprite = new GameSprite(
-      [scene.resources.getModel(ModelType.Player)!],
-      [0,-65,0]
+      [model],
+      [-Math.ceil(model.width/2),-65,0]
     )
     scene.addSprite(this.sprite)
     scene.registerKeyboardHandler(this)
@@ -46,7 +47,9 @@ export class Player implements KeyboardHandler {
     if (this._bullet !== null) { return }
     this._bullet = new GameSprite(
       [scene.resources.getModel(ModelType.Bullet)!],
-      vec3.copy(vec3.create(),[this.position[0],this.sprite.getBoundingBox().max[1]+1,0]) // place the bullet above the player
+      vec3.copy(vec3.create(),[
+        this.position[0] + Math.floor(this.sprite.currentFrame.width/2),
+        this.sprite.getBoundingBox().max[1]+1,0]) // place the bullet above the player
     )
     this._bullet.velocity = vec3.fromValues(0,playerBulletSpeed,0)
     this._bullet.type = GameObjectType.Bullet

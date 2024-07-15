@@ -52,7 +52,7 @@ export function createProjectionViewMatrix(width: number, height: number, zFar: 
 
 export function modelSpaceToWorldSpace(x:number, y:number, z:number, modelSize: vec3) {
   return vec3.fromValues(
-    x+0.5-modelSize[0]/2+0.002,
-    y+0.5-modelSize[1]/2+0.002,
-    -z+0.5-modelSize[2]/2+0.002)
+    x+0.5,
+    y+0.5,
+    -z+0.5)
 }

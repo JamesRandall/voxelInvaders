@@ -13,10 +13,25 @@ export enum ModelType {
 }
 
 function createBullet() {
-  return new VoxelModel(ModelType.Bullet, 1, 1, 1, [
+  return new VoxelModel(ModelType.Bullet, 1, 1, 4, [
     [
       [
-        new Voxel(new VoxelColor(1,1,0,1))
+        new Voxel(new VoxelColor(1,1,1,1)),
+      ]
+    ],
+    [
+      [
+        new Voxel(new VoxelColor(1,1,1,1)),
+      ]
+    ],
+    [
+      [
+        new Voxel(new VoxelColor(1,1,1,1)),
+      ]
+    ],
+    [
+      [
+        new Voxel(new VoxelColor(1,1,1,1)),
       ]
     ]
   ])

@@ -42,8 +42,8 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
 
     // constrain the player to the space taken up by the marching invaders
     this._player.sprite.positionConstraint = {
-      min: vec3.fromValues(Math.floor(-this._marchingInvaders.totalInvaderRowWidth/2),-65,0),
-      max: vec3.fromValues(Math.ceil(this._marchingInvaders.totalInvaderRowWidth/2),-65,0),
+      min: vec3.fromValues(Math.floor(-this._marchingInvaders.totalInvaderRowWidth/2-Math.floor(this._player.sprite.currentFrame.width/2)),-65,0),
+      max: vec3.fromValues(Math.floor(this._marchingInvaders.totalInvaderRowWidth/2 -Math.floor(this._player.sprite.currentFrame.width/2)),-65,0),
     }
 
     // Matching the physics refresh rate to the players bullet speed, which is high, ensures that collisions

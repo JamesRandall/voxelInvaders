@@ -16,7 +16,7 @@ export class MarchingInvaders {
 
   constructor(scene:GameScene) {
     const invaderModel = scene.resources.getModel(ModelType.InvaderFrame1)!
-    const invaderSpacing = 3
+    const invaderSpacing = 4
     const invadersAcross = 11
     this.totalInvaderRowWidth = (invaderModel.width+invaderSpacing)*(invadersAcross-1)-invaderSpacing
     this._maxInvaderMovement = Math.ceil((invaderModel.width+invaderSpacing)*1.75)
@@ -24,7 +24,7 @@ export class MarchingInvaders {
     for(let y=0; y < 5; y++) {
       const spriteY = invaderTopRowY - (y * (invaderModel.height+invaderSpacing))
       for(let x=0; x< invadersAcross; x++) {
-        const spriteX = this.totalInvaderRowWidth/2 - (x * (invaderModel.width+invaderSpacing))
+        const spriteX = this.totalInvaderRowWidth/2 - (x * (invaderModel.width+invaderSpacing)) - Math.floor(invaderModel.width/2)
         const invader = new GameSprite(
           [invaderModel],
           [spriteX,spriteY,0]

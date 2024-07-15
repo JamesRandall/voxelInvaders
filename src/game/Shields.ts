@@ -6,7 +6,7 @@ import { AxisAlignedBox } from "../engine/models/AxisAlignedBox"
 export class Shields {
   constructor(gl: WebGL2RenderingContext, scene:GameScene, invaderRowWidth:number) {
     const model = scene.resources.getModel(ModelType.Shield)!
-    let shieldX = -Math.floor(invaderRowWidth/2 - model.width/2)
+    let shieldX = -Math.floor(invaderRowWidth/2)
     let totalSpace = invaderRowWidth-(4*model.width)
     let space = Math.floor(totalSpace/3)
     for(let i = 0; i < 4; i++) {
