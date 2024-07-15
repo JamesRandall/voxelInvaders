@@ -3,8 +3,6 @@ import { GameObjectType, GameScene } from "./GameScene"
 import { ModelType } from "./startup"
 import { AxisAlignedBox } from "../engine/models/AxisAlignedBox"
 
-
-
 export class Shields {
   constructor(gl: WebGL2RenderingContext, scene:GameScene, invaderRowWidth:number) {
     const model = scene.resources.getModel(ModelType.Shield)!
@@ -26,11 +24,9 @@ export class Shields {
   public handleBulletCollision(gl:WebGL2RenderingContext, scene:GameScene, shield:GameSprite, intersection: AxisAlignedBox) {
     const boundingBox = shield.getBoundingBox()
     shield.mutateCurrentFrame(gl, mutation => {
-      //mutation.removeVoxel(intersection.min[0]-boundingBox.min[0], intersection.min[1]-boundingBox.min[1], intersection.min[2]-boundingBox.min[2])
       const x = intersection.min[0]-boundingBox.min[0]
       const y = intersection.min[1]-boundingBox.min[1]
-      //const z = intersection.min[2]-boundingBox.min[2]
-      for(let z=0; z < shield.currentFrame.depth-1; z++) {
+      for(let z=0; z < shield.currentFrame.depth; z++) {
         mutation.removeVoxel(x, y, z)
       }
     })

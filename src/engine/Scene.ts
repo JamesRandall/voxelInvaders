@@ -3,7 +3,7 @@ import { Camera } from "./Camera"
 import { RenderingModelProvider, ShaderProvider } from "./Resources"
 import { VoxelRenderer } from "./rendering/VoxelRenderer"
 import { AbstractRenderer } from "./rendering/AbstractRenderer"
-import { ParticleUniformLightingModel, UniformLightingModel } from "./rendering/lightingModels/UniformLightingModel"
+import { UniformLightingModel } from "./rendering/lightingModels/UniformLightingModel"
 import { CollisionHandler, Collisions } from "./Collisions"
 import { VoxelParticleSet } from "./rendering/VoxelParticleSet"
 import { VoxelParticleSetRenderer } from "./rendering/VoxelParticleSetRenderer"
@@ -87,7 +87,7 @@ export class Scene<TModelType, TWorldObjectType> {
   }
 
   public createSpriteRenderer(gl: WebGL2RenderingContext, shaders: ShaderProvider, renderingModels: RenderingModelProvider<TModelType>)  : AbstractRenderer<TModelType, TWorldObjectType> {
-    const lightingModel = new UniformLightingModel(
+    const lightingModel = UniformLightingModel.createVoxelLighting(
       gl,
       shaders
     )
@@ -95,7 +95,7 @@ export class Scene<TModelType, TWorldObjectType> {
   }
 
   public createParticleRenderer(gl: WebGL2RenderingContext, shaders: ShaderProvider) : AbstractRenderer<TModelType, TWorldObjectType> {
-    const lightingModel = new ParticleUniformLightingModel(
+    const lightingModel = UniformLightingModel.createParticleLighting(
       gl,
       shaders
     )

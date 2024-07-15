@@ -3,6 +3,8 @@ import { Camera } from "../../Camera"
 import { CoreProgramInfo } from "../CoreProgramInfo"
 import { ShaderProvider } from "../../Resources"
 
+// TODO: Need to revist how the type system is structured around lighting to make it impossible to assign
+// a particle lighting model to voxel rendering and vice-versa.
 export abstract class AbstractLightingModel {
   public shaderProgram: WebGLProgram
 

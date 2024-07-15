@@ -4,19 +4,14 @@ import { ModelType } from "./startup"
 import { GameSceneRenderer } from "./GameSceneRenderer"
 import { AbstractRenderer } from "../engine/rendering/AbstractRenderer"
 import { vec3 } from "gl-matrix"
-import { ParticlePhongLightingModel, PhongLightingModel } from "../engine/rendering/lightingModels/PhongLightingModel"
+import { PhongLightingModel } from "../engine/rendering/lightingModels/PhongLightingModel"
 import { Player, playerBulletSpeed } from "./Player"
 import { MarchingInvaders } from "./MarchingInvaders"
 import { Shields } from "./Shields"
 import { GameSprite } from "./GameSprite"
 import { AxisAlignedBox } from "../engine/models/AxisAlignedBox"
-import { VoxelParticleSetRenderer } from "../engine/rendering/VoxelParticleSetRenderer"
 import { Explosion } from "./Explosion"
 import { GameVoxelParticleSetRenderer } from "./GameVoxelParticleSetRenderer"
-import {
-  ParticleUniformLightingModel,
-  UniformLightingModel
-} from "../engine/rendering/lightingModels/UniformLightingModel"
 
 const maxSceneDepth = 90.0
 
@@ -69,7 +64,7 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
   }
 
   private createLightingModel(gl: WebGL2RenderingContext, shaders: ShaderProvider,) {
-    return new PhongLightingModel(
+    return PhongLightingModel.createVoxelLighting(
       gl,
       shaders, {
         lightDirection: vec3.normalize(vec3.create(), [0.4,-0.4,0.4]),
@@ -93,7 +88,7 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
   }
 
   override createParticleRenderer(gl: WebGL2RenderingContext, shaders: ShaderProvider): AbstractRenderer<ModelType, GameObjectType> {
-    const lightingModel = new ParticlePhongLightingModel(
+    const lightingModel = PhongLightingModel.createParticleLighting(
       gl,
       shaders, {
         lightDirection: vec3.normalize(vec3.create(), [0.4,-0.4,0.4]),

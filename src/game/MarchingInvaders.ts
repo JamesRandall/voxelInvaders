@@ -41,6 +41,9 @@ export class MarchingInvaders {
     this._invaderReferencePoint.updatePosition(frameLength)
     const referenceX = this._invaderReferencePoint.position[0]
     if ((this._invaderSpeed > 0 && referenceX > this._maxInvaderMovement) || (this._invaderSpeed < 0 && referenceX < -this._maxInvaderMovement)) {
+      // I have the Invaders speeding up as they move down the screen. The invaders in the original game speeded up "naturally".
+      // As each invader was destroyed their was less work for the game loop to do and so each remaining Invader was updated
+      // more frequently. This had the effect of speeding up the game.
       this._invaderSpeed = (this._invaderSpeed > 0 ? -invaderSpeedChange : invaderSpeedChange) + -this._invaderSpeed
       scene.sprites.forEach(sprite => {
         if (sprite.type === GameObjectType.Invader) {
