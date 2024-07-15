@@ -5,7 +5,7 @@ import { GameSceneRenderer } from "./GameSceneRenderer"
 import { AbstractRenderer } from "../engine/rendering/AbstractRenderer"
 import { vec3 } from "gl-matrix"
 import { ParticlePhongLightingModel, PhongLightingModel } from "../engine/rendering/lightingModels/PhongLightingModel"
-import { Player } from "./Player"
+import { Player, playerBulletSpeed } from "./Player"
 import { MarchingInvaders } from "./MarchingInvaders"
 import { Shields } from "./Shields"
 import { GameSprite } from "./GameSprite"
@@ -50,6 +50,10 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
       min: vec3.fromValues(Math.floor(-this._marchingInvaders.totalInvaderRowWidth/2),-65,0),
       max: vec3.fromValues(Math.ceil(this._marchingInvaders.totalInvaderRowWidth/2),-65,0),
     }
+
+    // Matching the physics refresh rate to the players bullet speed, which is high, ensures that collisions
+    // are accurate. See comment in Collisions.ts
+    this.physicsRefreshRate = 1/playerBulletSpeed
 
     this.registerCollisionType(
       GameObjectType.Bullet,
@@ -100,7 +104,6 @@ export class GameScene extends Scene<ModelType,GameObjectType> {
       })
 
     return new GameVoxelParticleSetRenderer(gl, lightingModel, this.getRotation.bind(this))
-    //return new GameVoxelParticleSetRenderer(gl, new ParticleUniformLightingModel(gl, shaders), this.getRotation.bind(this))
   }
 
 

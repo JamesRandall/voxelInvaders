@@ -19,6 +19,8 @@ export class Scene<TModelType, TWorldObjectType> {
   private _sprites : VoxelSprite<TModelType, TWorldObjectType>[] = []
   private _deferredSpriteAdditions : VoxelSprite<TModelType, TWorldObjectType>[]|null = null
   private _particleSets: VoxelParticleSet[] = []
+  // By default the physics will update once per frame but this can be overridden
+  protected physicsRefreshRate : number | null = null
 
   public view = {
     camera: Camera.default(),
@@ -56,15 +58,22 @@ export class Scene<TModelType, TWorldObjectType> {
   }
 
   public update(gl: WebGL2RenderingContext, frameLength: number) : Scene<TModelType,TWorldObjectType> | null {
-    // When the game update loop is in progress we defer the addition and removal of sprites
-    // this allows us to avoid modifying the array of sprites while it is being iterated over or taking
-    // potentially expensive copies of the sprite array
-    this.updateParticleSets(frameLength)
-    this.beginDeferredSpriteAdditions()
-    this.updateSprites(frameLength)
-    this._collisions.evaluateCollisions(gl, this.sprites)
-    this.removeSpritesMarkedForRemoval()
-    this.endDeferredSpriteAdditions()
+    let loopCount = 0
+    const refreshRate = this.physicsRefreshRate ?? frameLength
+    while(frameLength > 0) {
+      const updateFrameLength = Math.min(frameLength,refreshRate)
+      this.updateParticleSets(updateFrameLength)
+      // When the game update loop is in progress we defer the addition and removal of sprites
+      // this allows us to avoid modifying the array of sprites while it is being iterated over or taking
+      // potentially expensive copies of the sprite array
+      this.beginDeferredSpriteAdditions()
+      this.updateSprites(updateFrameLength)
+      this._collisions.evaluateCollisions(gl, this.sprites)
+      this.removeSpritesMarkedForRemoval()
+      this.endDeferredSpriteAdditions()
+      frameLength -= refreshRate
+      console.log("Loop count: ", loopCount++)
+    }
     return this
   }
 

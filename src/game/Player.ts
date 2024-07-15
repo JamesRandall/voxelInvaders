@@ -7,6 +7,7 @@ import { GameObjectType, GameScene } from "./GameScene"
 import { invaderTopRowY } from "./MarchingInvaders"
 
 const playerSpeed = 64.0
+export const playerBulletSpeed = 120.0
 
 export class Player implements KeyboardHandler {
   private _controlState = startingControlState()
@@ -45,9 +46,9 @@ export class Player implements KeyboardHandler {
     if (this._bullet !== null) { return }
     this._bullet = new GameSprite(
       [scene.resources.getModel(ModelType.Bullet)!],
-      vec3.copy(vec3.create(),this.position)
+      vec3.copy(vec3.create(),[this.position[0],this.sprite.getBoundingBox().max[1]+1,0]) // place the bullet above the player
     )
-    this._bullet.velocity = vec3.fromValues(0,150,0)
+    this._bullet.velocity = vec3.fromValues(0,playerBulletSpeed,0)
     this._bullet.type = GameObjectType.Bullet
     scene.addSprite(this._bullet)
   }

@@ -52,7 +52,7 @@ export class Collisions<TModelType, TWorldObjectType> {
           let voxelA = a.currentFrame.voxels[aZ][aY][aX]
           let voxelB = b.currentFrame.voxels[bZ][bY][bX]
 
-          if (voxelA && voxelB) {
+          if (voxelA && voxelB && !voxelA.isDeleted && !voxelB.isDeleted) {
             minX = minX === null ? x : Math.min(minX, x)
             minY = minY === null ? y : Math.min(minY, y)
             minZ = minZ === null ? z : Math.min(minZ, z)
@@ -68,6 +68,10 @@ export class Collisions<TModelType, TWorldObjectType> {
     return { min: [minX!, minY!, minZ!], max: [maxX!, maxY!, maxZ!]}
   }
 
+  // This is a fairly simple approach to collisions that has lots of scope for optimisation both in terms of
+  // performance and contains a notable flaw: an object moving at high speed could pass through another object
+  // In the future I may come back and fix this but for now its been mitigated by running the physics at a high
+  // refresh rate. See code in Scene.ts
   public evaluateCollisions(gl: WebGL2RenderingContext, sprites:ReadonlyArray<VoxelSprite<TModelType, TWorldObjectType>>) {
     if (this._collisionTypes.size === 0) { return }
     sprites.forEach(sprite => {

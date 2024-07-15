@@ -95,7 +95,7 @@ function appendDataForVoxel(
     vertexColors.push(voxel.color.b)
     vertexColors.push(voxel.color.a)
 
-    visible.push(1)
+    visible.push(voxel.isDeleted ? 0 : 1)
   })
   VoxelRenderingGeometry.baseNormals.forEach(n => {
     vertexNormals.push(n[0])

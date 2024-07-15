@@ -82,7 +82,7 @@ export class VoxelSprite<TModelType, TWorldObjectType> extends WorldObject<TWorl
     return new AxisAlignedBox(minCoords, maxCoords);
   }
 
-  public mutateCurrentFrame(mutation:(mutation:SpriteMutation) => void) {
+  public mutateCurrentFrame(gl: WebGL2RenderingContext, mutation:(mutation:SpriteMutation) => void) {
     if (!this._isDestructible) { return }
     let didAdd = false
     mutation({
@@ -101,5 +101,6 @@ export class VoxelSprite<TModelType, TWorldObjectType> extends WorldObject<TWorl
         }
       }
     })
+    this._frameRenderModels[this._currentFrameIndex] = createVoxelRenderingModel(gl, this._frames[this._currentFrameIndex])
   }
 }
