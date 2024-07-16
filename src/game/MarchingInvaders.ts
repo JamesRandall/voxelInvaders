@@ -107,5 +107,6 @@ export class MarchingInvaders {
         sprite.velocity = vec3.fromValues(this._invaderSpeed,0,0)
       }
     })
+    this._invaderReferencePoint.velocity = vec3.fromValues(this._invaderSpeed,0,0)
   }
 }
