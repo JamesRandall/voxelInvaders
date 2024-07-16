@@ -62,6 +62,9 @@ export class Shields {
               mutation.removeVoxel(x, y, z)
               yVoxels.push(new Voxel(voxel.color))
             }
+            else {
+              yVoxels.push(null)
+            }
           }
         }
       }

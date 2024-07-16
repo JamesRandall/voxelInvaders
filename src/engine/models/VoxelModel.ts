@@ -32,4 +32,15 @@ export class VoxelModel<TModelType> {
     )
     return new VoxelModel<TModelType>(type, width, height, depth, voxels)
   }
+
+  static empty<TModelType>(type: TModelType, width:number, height:number, depth:number): VoxelModel<TModelType> {
+    const voxels = new Array(depth).fill(null).map(() =>
+      new Array(height).fill(null).map(() =>
+        new Array(width).fill(null).map(() =>
+          null
+        )
+      )
+    )
+    return new VoxelModel<TModelType>(type, width, height, depth, voxels)
+  }
 }

@@ -4,8 +4,10 @@ import { VoxelModel } from "../engine/models/VoxelModel"
 import { VoxelColor } from "../engine/models/VoxelColor"
 
 export enum ModelType {
-  InvaderFrame1,
-  InvaderFrame2,
+  Invader1,
+  Invader2,
+  Invader3,
+  Invader4,
   Player,
   PlayerBullet,
   InvaderBullet,
@@ -23,7 +25,10 @@ function createInvaderBullet() {
 
 (async () => await mount({
   voxelModels: [
-    { type: ModelType.InvaderFrame1, source: "invader1" },
+    { type: ModelType.Invader1, source: "invader1" },
+    { type: ModelType.Invader2, source: "invader2" },
+    { type: ModelType.Invader3, source: "invader3" },
+    { type: ModelType.Invader4, source: "invader4" },
     { type: ModelType.Player, source: "player" },
     { type: ModelType.Shield, source: "shield" },
     { type: ModelType.PlayerBullet, source: createPlayerBullet() },

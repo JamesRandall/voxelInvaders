@@ -16,7 +16,7 @@ export class Explosion extends VoxelParticleSet {
         for (let x=0; x < model.width; x++) {
           const voxel = model.voxels[z][y][x]
           if (voxel === null) { continue }
-          const startingVelocity = vec3.multiply(vec3.create(),vec3.normalize(vec3.create(), [x-model.width/2,y-model.height/2,z-model.depth/2]),[maxInitialSpeedRange,maxInitialSpeedRange,maxInitialSpeedRange])
+          const startingVelocity = vec3.multiply(vec3.create(),vec3.normalize(vec3.create(), [x-model.width/2,y-model.height/2,Math.abs(z-model.depth/2)]),[maxInitialSpeedRange,maxInitialSpeedRange,maxInitialSpeedRange])
           vec3.add(startingVelocity,startingVelocity,[Math.random()*randomFactor-randomFactor/2,Math.random()*randomFactor-randomFactor/2,Math.random()*randomFactor-randomFactor/2])
           const particle = {
             startingPosition: modelSpaceToWorldSpace(x, y, z, model.size),
