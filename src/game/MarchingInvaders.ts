@@ -81,7 +81,7 @@ export class MarchingInvaders {
 
     const bullet = new GameSprite(
       [scene.resources.getModel(ModelType.InvaderBullet)!],
-      [firingInvader.position[0], firingInvader.position[1], 0]
+      [Math.floor(firingInvader.position[0]+firingInvader.currentFrame.width/2), Math.ceil(firingInvader.position[1]-firingInvader.currentFrame.height/2), 0]
     )
     bullet.type = GameObjectType.InvaderBullet
     bullet.velocity = vec3.fromValues(0,-playerBulletSpeed/2,0)
